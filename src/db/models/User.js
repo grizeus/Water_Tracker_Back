@@ -34,7 +34,8 @@ const authSchema = new Schema(
     // URL аватара користувача, за замовчуванням Cloudinary посилання
     avatarURL: {
       type: String,
-      default: 'https://res.cloudinary.com/',
+      default:
+        'https://asset.cloudinary.com/dtyqyfest/f14d60e17eae987dfc70575c82cfe529',
     },
     token: {
       type: String,
