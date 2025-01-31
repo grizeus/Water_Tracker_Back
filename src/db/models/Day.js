@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 
 const waterEntrySchema = new Schema({
+  _id: { type: Schema.Types.ObjectId, auto: true },
   time: {
     type: String,
     required: false,
@@ -41,34 +42,61 @@ const waterTrackingSchema = new Schema({
   },
 });
 
-// Оновлення progress перед збереженням коли додаємо нове значення
+// 🔹 Функція для перерахунку прогресу
+const calculateProgress = (entries, dailyGoal) => {
+  const totalConsumed = entries.reduce((sum, entry) => sum + entry.amount, 0);
+  return dailyGoal > 0 ? Math.min((totalConsumed / dailyGoal) * 100, 100) : 0;
+};
+
+// 🔹 Оновлення `progress` перед збереженням нового запису
 waterTrackingSchema.pre('save', function (next) {
-  const totalConsumed = this.entries.reduce(
-    (sum, entry) => sum + entry.amount,
-    0,
-  );
-  this.progress =
-    this.dailyGoal > 0
-      ? Math.min((totalConsumed / this.dailyGoal) * 100, 100)
-      : 0;
+  this.progress = calculateProgress(this.entries, this.dailyGoal);
   next();
 });
 
-// Оновлення progress перед оновленням через findOneAndUpdate коли хочемо змінити вже існуючий запис
-waterTrackingSchema.pre('findOneAndUpdate', function (next) {
+waterTrackingSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
 
-  if (update.entries) {
-    const totalConsumed = update.entries.reduce(
-      (sum, entry) => sum + entry.amount,
-      0,
-    );
+  // Отримуємо поточний запис перед оновленням
+  const existingDoc = await this.model.findOne(this.getQuery());
 
-    update.progress =
-      update.dailyGoal > 0
-        ? Math.min((totalConsumed / update.dailyGoal) * 100, 100)
-        : 0;
+  if (!existingDoc) {
+    return next(); // Якщо документа немає, оновлювати нічого
   }
+
+  let updatedEntries = [...existingDoc.entries]; // Створюємо копію поточного масиву entries
+
+  // 🔹 Якщо додається новий запис ($push)
+  if (update.$push && update.$push.entries) {
+    updatedEntries.push(update.$push.entries);
+  }
+
+  // 🔹 Якщо видаляється запис ($pull)
+  if (update.$pull && update.$pull.entries) {
+    const condition = update.$pull.entries;
+    updatedEntries = updatedEntries.filter((entry) => {
+      return !Object.keys(condition).every(
+        (key) => entry[key] === condition[key],
+      );
+    });
+  }
+
+  // 🔹 Якщо оновлюється окремий `entry` ($set)
+  if (update.$set && update.$set['entries.$']) {
+    const updatedEntry = update.$set['entries.$'];
+    updatedEntries = updatedEntries.map((entry) =>
+      entry._id.equals(updatedEntry._id)
+        ? { ...entry, ...updatedEntry }
+        : entry,
+    );
+  }
+
+  // Використовуємо оновлений список `entries` для перерахунку прогресу
+  update.$set = update.$set || {};
+  update.$set.progress = calculateProgress(
+    updatedEntries,
+    update.$set.dailyGoal || existingDoc.dailyGoal,
+  );
 
   next();
 });
