@@ -6,7 +6,13 @@ const waterEntrySchema = new Schema({
   time: {
     type: String,
     required: false,
-    // default:поточна дата
+
+    // по дефолту можна генерувати і зберігати дані для часу
+    // default: function () {
+    //   return new Date().toLocaleTimeString("uk-UA", {
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //   }); // Формат HH:MM
   },
   amount: {
     type: Number,
@@ -25,6 +31,8 @@ const waterTrackingSchema = new Schema({
   date: {
     type: String, // YYYY-MM-DD
     required: true,
+    // по дефолту можна генерувати і зберігати дані для дати
+    // default: () => new Date().toISOString().split('T')[0], // Отримаємо YYYY-MM-DD
   },
   dailyGoal: {
     type: Number,
