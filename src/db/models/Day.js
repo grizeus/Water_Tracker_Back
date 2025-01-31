@@ -6,6 +6,7 @@ const waterEntrySchema = new Schema({
   time: {
     type: String,
     required: false,
+    // default:поточна дата
   },
   amount: {
     type: Number,

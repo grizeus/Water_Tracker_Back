@@ -5,3 +5,7 @@
 .vscode
 .DS_Store
 .idea
+
+
+# файл для збереження пулів
+pullrequests-list.txt
