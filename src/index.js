@@ -1,8 +1,13 @@
 import { setupServer } from './server.js';
-import { initMondoDb } from './db/initMondoDb.js';
+import { initMongoDb } from './db/initMongoDb.js';
+
+import { createDirIfNotExist } from './utils/createDirIfNotExist.js';
+
+import { TEMP_UPLOADS_DIR } from './constants/index.js';
 
 const bootstrap = async () => {
-  await initMondoDb();
+  await createDirIfNotExist(TEMP_UPLOADS_DIR);
+  await initMongoDb();
   setupServer();
 };
 
