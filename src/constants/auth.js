@@ -1,4 +1,4 @@
-export const regulaкExpressionEmail =
+export const regularExpressionEmail =
   /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
 
 export const accessTokenLifeTime = 1000 * 60 * 60 * 24;

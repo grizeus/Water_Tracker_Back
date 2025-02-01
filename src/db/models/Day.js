@@ -25,8 +25,6 @@ const waterTrackingSchema = new Schema({
   date: {
     type: String, // YYYY-MM-DD
     required: true,
-    // по дефолту можна генерувати і зберігати дані для дати
-    // default: () => new Date().toISOString().split('T')[0], // Отримаємо YYYY-MM-DD
   },
   dailyGoal: {
     type: Number,

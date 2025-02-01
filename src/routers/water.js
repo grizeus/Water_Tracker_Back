@@ -43,7 +43,7 @@ waterRouter.get(
 
 // Оновлення денної норми споживання води
 waterRouter.patch(
-  '/user/daily-goal',
+  '/daily-norma',
   //   authenticate, // Мідлвар для автентифікації
   validateBody(), // Валідація для dailyGoal
   ctrlWrapper(waterControllers.updateDailyWaterController),

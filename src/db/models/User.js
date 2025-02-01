@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 import { genderList } from '../../constants/user.js';
+import { regularExpressionEmail } from '../../constants/auth.js';
 
 const { Schema, model } = mongoose;
 
@@ -8,7 +9,7 @@ const authSchema = new Schema(
   {
     email: {
       type: String,
-      // match: змінна,
+      match: regularExpressionEmail,
       unique: true,
       required: true,
     },

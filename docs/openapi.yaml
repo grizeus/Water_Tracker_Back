@@ -34,6 +34,23 @@ paths:
   /user/{id}/avatar:
     patch:
       $ref: '../swagger/paths/user/{id}/userAvatarUpdate.yaml'
+  /water/water-entry:
+    post:
+      $ref: '../swagger/paths/water/waterPost.yaml'
+  /water/water-entry/{id}:
+    patch:
+      $ref: '../swagger/paths/water/{id}/waterByIdPatch.yaml'
+    delete:
+      $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
+  /water/today:
+    get:
+      $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
+  /water/month/:month:
+    get:
+      $ref: '../swagger/paths/water/monthlyWaterDataGet.yaml'
+  /water/daily-norma:
+    patch:
+      $ref: '../swagger/paths/water/dailyWaterPatch.yaml'
 components:
   securitySchemes:
     bearerAuth:
