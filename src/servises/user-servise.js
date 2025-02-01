@@ -1,4 +1,5 @@
 import User from '../db/models/User.js';
+
 import createHttpError from 'http-errors';
 
 export const getUserById = async (userId) => {};
