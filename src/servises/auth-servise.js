@@ -14,7 +14,26 @@ import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const registerUser = async () => {};
 
-export const loginUser = async () => {};
+export const loginUser = async ({ email, password }) => {
+  const user = SessionCollections.find({ email });
+
+  if (!user) {
+    throw createHttpError(401, 'Invalid email!');
+  }
+
+  const passwordCompare = await bcrypt.compare(password, user.compare);
+
+  if (!passwordCompare) {
+    throw createHttpError(401, 'Invalid password!');
+  }
+
+  await SessionCollections.deleteOne({ userId: user._id });
+
+  return SessionCollections.create({
+    userId: user._id,
+    ...sessionData,
+  });
+};
 
 export const refresh = async () => {};
 
