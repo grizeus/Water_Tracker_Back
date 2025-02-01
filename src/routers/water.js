@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import * as waterControllers from '../controllers/waterControllers.js';
+import * as waterControllers from '../controllers/water.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
@@ -22,6 +22,7 @@ waterRouter.post(
 // Редагування запису по спожитій воді
 waterRouter.patch(
   '/water-entry/:id',
+// T9-updateWaterEntr
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
