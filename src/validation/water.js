@@ -1,5 +1,8 @@
 import Joi from 'joi';
 
+/* закоментований код - це пропозиція щодо змін в схемі, які будуть валідувати формат час який заходить в базу */
+// import { waterRegexp } from "../constants/water.js";
+
 export const waterEntrySchema = Joi.object({
   amount: Joi.number().integer().min(50).max(5000).messages({
     'number.base': 'Amount must be a number.',
@@ -10,6 +13,8 @@ export const waterEntrySchema = Joi.object({
   time: Joi.string().messages({
     'string.base': 'Time must be a string.',
   }),
+
+  // time: Joi.string().regex(waterRegexp)
 });
 
 export const dailyGoalSchema = Joi.object({
