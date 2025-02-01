@@ -12,7 +12,17 @@ import SessionCollections from '../db/models/Session.js';
 
 import { getEnvVar } from '../utils/getEnvVar.js';
 
-export const registerUser = async () => {};
+export const registerUser = async (payload) => {
+  const user = await UserCollections.findOne({ email: payload.email });
+  if (user) throw createHttpError(409, 'Email in use');
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  return await UserCollections.create({
+    ...payload,
+    password: encryptedPassword,
+  });
+};;
 
 export const loginUser = async ({ email, password }) => {
   const user = await SessionCollections.find({ email });
