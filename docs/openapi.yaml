@@ -15,7 +15,7 @@ tags:
     description: Operations about Water
 servers:
   - url: http://localhost:3000
-  - url: https://наш рендер
+  - url: https://watertrackerbackend-5ymk.onrender.com
 paths:
   /auth/signup:
     post:

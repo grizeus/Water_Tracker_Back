@@ -1,0 +1,15 @@
+description: 'Failed to delete photo due to an error on Cloudinary'
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          example: 422
+        message:
+          type: string
+          example: 'Failed to delete photo from Cloudinary: Some error occurred.'

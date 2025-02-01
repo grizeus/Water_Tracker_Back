@@ -7,13 +7,13 @@ export const addWaterEntry = async () => {};
 export const updateWaterEntry = async () => {};
 
 // Видалення запису про випиту воду
-export const removeWaterEntry = async (entryId) => {};
+export const deleteWaterEntry = async () => {};
 
 // Отримання денної статистики
-export const getDailyWaterData = async (userId) => {};
+export const getDailyWaterData = async () => {};
 
 // Отримання місячної статистики
-export const getMonthlyWaterDataController = async (userId, month) => {};
+export const getMonthlyWaterData = async () => {};
 
 // Оновлення денної норми
-export const updateDailyWaterController = async (userId, dailyGoal) => {};
+export const updateDailyWater = async () => {};
