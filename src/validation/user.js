@@ -23,7 +23,7 @@ export const userInfoSchema = Joi.object({
     .valid(...genderList)
     .messages({
       'string.base': 'Gender must be a string.',
-      'any.only': 'Gender must be one of the following values: male, female.',
+      'any.only': 'Gender must be one of the following values: woman, man.',
     }),
 
   name: Joi.string().max(32).messages({
