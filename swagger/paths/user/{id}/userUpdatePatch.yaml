@@ -1,7 +1,7 @@
 tags:
   - Users
 summary: Update user
-operationId: updateContact
+operationId: updateUser
 description: 'Updating a user by its unique identifier'
 security:
   - bearerAuth: []
@@ -39,7 +39,7 @@ requestBody:
             format: binary
 responses:
   '200':
-    description: 'Contact successfully updated'
+    description: 'User successfully updated'
     content:
       application/json:
         schema:
