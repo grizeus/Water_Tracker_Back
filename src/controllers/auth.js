@@ -1,3 +1,4 @@
+import createHttpError from 'http-errors';
 import {
   registerUser,
   loginUser,

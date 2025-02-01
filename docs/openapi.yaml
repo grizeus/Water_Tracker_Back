@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Water Tracker aplocation
+  title: Water Tracker application
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -18,13 +18,14 @@ servers:
   - url: https://наш рендер
 paths:
   /auth/signup:
-    post: $ref: ''
+    post:
+      $ref: '../swagger/paths/auth/singUpPost.yaml'
   /auth/signin:
-    post: $ref: ''
+    post:
+      $ref: '../swagger/paths/auth/singInPost.yaml'
   /auth/refresh:
-    post: $ref: ''
-  /auth/send-reset-email:
-    post: $ref: ''
+    post:
+      $ref: '../swagger/paths/auth/refreshPost.yaml'
 components:
   securitySchemes:
     bearerAuth:

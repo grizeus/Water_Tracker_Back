@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "lint": "eslint src/**/*.js",
-    "start": "node ./src/index.js"
+    "start": "node ./src/index.js",
+    "build": "npm run build-docs",
+    "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
+    "preview-docs": "redocly preview-docs"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@redocly/cli": "^1.28.0",
     "eslint": "^9.19.0",
     "globals": "^15.14.0",
     "nodemon": "^3.1.9",
