@@ -23,6 +23,9 @@ paths:
   /auth/signin:
     post:
       $ref: '../swagger/paths/auth/singInPost.yaml'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/logoutPost.yaml'
   /auth/refresh:
     post:
       $ref: '../swagger/paths/auth/refreshPost.yaml'
