@@ -14,17 +14,17 @@ import { validateBody } from '../middlewares/validateBody.js';
 
 const userRouter = Router();
 
-userRouter.get('/:id', ctrlWrapper(userControllers.getUserControllers));
+userRouter.get('/:id', ctrlWrapper(userControllers.getUserController));
 
 userRouter.patch(
   '/:id',
   validateBody(),
-  ctrlWrapper(userControllers.updateUserControler),
+  ctrlWrapper(userControllers.updateUserController),
 );
 
 userRouter.patch(
   '/:id/avatar',
-  ctrlWrapper(userControllers.updateAvatarControler),
+  ctrlWrapper(userControllers.updateAvatarController),
 );
 
 // не забути додати мідл вару authenticate до всіх захищених маршрутів

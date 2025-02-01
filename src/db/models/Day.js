@@ -6,13 +6,7 @@ const waterEntrySchema = new Schema({
   time: {
     type: String,
     required: false,
-
-    // по дефолту можна генерувати і зберігати дані для часу
-    // default: function () {
-    //   return new Date().toLocaleTimeString("uk-UA", {
-    //     hour: "2-digit",
-    //     minute: "2-digit",
-    //   }); // Формат HH:MM
+    default: () => new Date(),
   },
   amount: {
     type: Number,

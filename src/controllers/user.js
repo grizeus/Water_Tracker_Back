@@ -3,7 +3,7 @@ import {
   getUserById,
   updateAvatarById,
   updateUserById,
-} from '../services/userService.js';
+} from '../servises/user-servise.js';
 
 export const getUserController = async (req, res, next) => {};
 
