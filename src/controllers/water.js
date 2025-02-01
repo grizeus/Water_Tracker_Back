@@ -14,7 +14,13 @@ export const addWaterEntryController = async (req, res) => { };
 export const updateWaterEntryController = async (req, res) => {
   const { id: _id } = req.params;
   const { time, amount } = req.body;
+
+  console.log("Received ID:", _id);
+  console.log("Received body:", { amount, time });
+
   const result = await updateWaterEntry(_id, { amount, time });
+
+  console.log("Update result:", result);
 
   res.status(200).json({
     data: result,

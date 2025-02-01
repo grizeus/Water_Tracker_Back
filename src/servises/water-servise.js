@@ -4,7 +4,12 @@ import DayCollections from '../db/models/Day.js';
 export const addWaterEntry = async () => { };
 
 // Оновлення запису про випиту воду
-export const updateWaterEntry = async () => { };
+export const updateWaterEntry = async (userId, payload) => {
+    return DayCollections.findByIdAndUpdate(userId, {
+        ...payload,
+        new: true
+    })
+};
 
 // Видалення запису про випиту воду
 export const deleteWaterEntry = async () => { };
@@ -13,12 +18,7 @@ export const deleteWaterEntry = async () => { };
 export const getDailyWaterData = async () => { };
 
 // Отримання місячної статистики
-export const getMonthlyWaterData = async (userId, payload) => {
-    return DayCollections.findByIdAndUpdate(userId, {
-        ...payload,
-        new: true
-    })
-};
+export const getMonthlyWaterData = async () => { };
 
 // Оновлення денної норми
 export const updateDailyWater = async () => { };
