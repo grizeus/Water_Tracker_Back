@@ -1,0 +1,30 @@
+type: object
+required:
+  - email
+  - password
+properties:
+  name:
+    description: "User's name"
+    default: 'test@test.com'
+    type: string
+    example: 'John Doe'
+  email:
+    description: 'Users email'
+    type: string
+    example: 'example@example.com'
+  password:
+    description: "User's password"
+    type: string
+    example: '********'
+  gender:
+    description: "User's gender"
+    type: string
+    enum: ['woman', 'man']
+  avatarURL:
+    description: "Link to users's avatar"
+    type: string
+    format: binary
+    example: https://res.cloudinary.com/photo/image.png
+  token:
+    description: "User's token"
+    type: string

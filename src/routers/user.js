@@ -6,31 +6,27 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/upload.js';
 
-import { userInfo } from '../validation/user.js';
+import { userInfoSchema } from '../validation/user.js';
 
 import * as userControllers from '../controllers/user.js';
 
 const userRouter = Router();
 
+userRouter.use(authenticate);
+
 // Маршрут для отримання інформації про користувача за ID
-userRouter.get(
-  '/:id',
-  authenticate,
-  ctrlWrapper(userControllers.getUserController),
-);
+userRouter.get('/:id', ctrlWrapper(userControllers.getUserController));
 
 // Маршрут для оновлення інформації про користувача
 userRouter.patch(
   '/:id',
-  authenticate,
-  validateBody(userInfo),
+  validateBody(userInfoSchema),
   ctrlWrapper(userControllers.updateUserController),
 );
 
 // Маршрут для оновлення аватара
 userRouter.patch(
   '/:id/avatar',
-  authenticate,
   upload.single('photo'),
   ctrlWrapper(userControllers.updateAvatarController),
 );

@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { genderList } from '../constants/user.js';
 
-export const userInfo = Joi.object({
+export const userInfoSchema = Joi.object({
   email: Joi.string().email().messages({
     'string.base': 'Email must be a string.',
     'string.email': 'Email must be a valid email address.',
@@ -23,7 +23,7 @@ export const userInfo = Joi.object({
     .valid(...genderList)
     .messages({
       'string.base': 'Gender must be a string.',
-      'any.only': 'Gender must be one of the following values: male, female.',
+      'any.only': 'Gender must be one of the following values: woman, man.',
     }),
 
   name: Joi.string().max(32).messages({

@@ -8,10 +8,10 @@ export const handleSaveError = (error, doc, next) => {
 };
 
 export const setUpdateSettings = function (next) {
-  if (!this.optins) {
-    this.optins = {};
+  if (!this.options) {
+    this.options = {};
   }
-  this.optins.new = true;
-  this.optins.runValidators = true;
+  this.options.new = true;
+  this.options.runValidators = true;
   next();
 };
