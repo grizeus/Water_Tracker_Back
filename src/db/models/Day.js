@@ -6,7 +6,7 @@ const waterEntrySchema = new Schema({
   time: {
     type: String,
     required: false,
-    default: () => new Date(),
+    default: () => new Date().toISOString(),
   },
   amount: {
     type: Number,
@@ -21,7 +21,8 @@ const waterTrackingSchema = new Schema({
     // type: Schema.Types.ObjectId,
     // ref: 'users',
     // required: true,
-    type: String
+    type: String,
+
   },
   date: {
     type: String, // YYYY-MM-DD

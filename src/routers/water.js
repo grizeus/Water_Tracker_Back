@@ -22,6 +22,7 @@ waterRouter.post(
 // Редагування запису по спожитій воді
 waterRouter.patch(
   '/water-entry/:id',
+  // T9-updateWaterEntr
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
