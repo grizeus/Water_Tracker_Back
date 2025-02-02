@@ -27,7 +27,6 @@ waterRouter.patch(
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
 
-// Видалення запису по спожитій воді
 waterRouter.delete(
   '/water-entry/:id',
   ctrlWrapper(waterControllers.deleteWaterEntryController),

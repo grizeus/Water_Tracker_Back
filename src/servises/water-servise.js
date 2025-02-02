@@ -12,7 +12,7 @@ export const updateWaterEntry = async (userId, payload) => {
 };
 
 // Видалення запису про випиту воду
-export const deleteWaterEntry = async () => { };
+export const deleteWaterEntry = async (filter) => DayCollections.findOneAndDelete(filter);
 
 // Отримання денної статистики
 export const getDailyWaterData = async () => { };
