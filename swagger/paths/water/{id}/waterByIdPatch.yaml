@@ -24,3 +24,26 @@ requestBody:
             example: '10:30'
           amount:
             type: string
+            description: Update amount of water consumed (in ml)
+            minimum: 50
+            maximum: 5000
+            example: 250
+responses:
+  '200':
+    description: Water entry updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            data:
+              $ref: ../../../components/schemas/water/water.yaml
+            message:
+              type: string
+              example: 'Water entry updated successfully'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'
