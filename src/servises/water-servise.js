@@ -1,10 +1,13 @@
 import createHttpError from 'http-errors';
 import DayCollections from '../db/models/Day.js';
 
+import mongoose from "mongoose"
+
 //  Додавання запису про випиту воду
 export const addWaterEntry = async () => {};
 
 // Оновлення запису про випиту воду
+
 export const updateWaterEntry = async (userId, payload) => {
   return DayCollections.findByIdAndUpdate(userId, {
     ...payload,
@@ -14,6 +17,13 @@ export const updateWaterEntry = async (userId, payload) => {
 
 // Видалення запису про випиту воду
 export const deleteWaterEntry = async () => {};
+export const updateWaterEntry = async ({ userId, payload }) => {
+    console.log(userId);
+    return await DayCollections.findByIdAndUpdate(userId, payload, { new: true });
+}
+
+// Видалення запису про випиту воду
+export const deleteWaterEntry = async (filter) => DayCollections.findOneAndDelete(filter);
 
 // Отримання денної статистики
 export const getDailyWaterData = async () => {};

@@ -22,6 +22,7 @@ const waterTrackingSchema = new Schema({
     // ref: 'users',
     // required: true,
     type: String,
+
   },
   date: {
     type: String, // YYYY-MM-DD
