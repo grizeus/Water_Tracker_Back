@@ -12,6 +12,18 @@ import SessionCollections from '../db/models/Session.js';
 
 import { getEnvVar } from '../utils/getEnvVar.js';
 
+import {
+  accessTokenLifeTime,
+  refreshTokenLifeTime,
+} from '../constants/auth.js';
+
+const createSessionData = () => ({
+  accessToken: randomBytes(35).toString('base64'),
+  refreshToken: randomBytes(35).toString('base64'),
+  accessTokenValidUntil: Date.now() + accessTokenLifeTime,
+  refreshTokenValidUntil: Date.now() + refreshTokenLifeTime,
+});
+
 export const registerUser = async (payload) => {
   const user = await UserCollections.findOne({ email: payload.email });
   if (user) throw createHttpError(409, 'Email in use');
@@ -22,16 +34,16 @@ export const registerUser = async (payload) => {
     ...payload,
     password: encryptedPassword,
   });
-};;
+};
 
 export const loginUser = async ({ email, password }) => {
-  const user = await SessionCollections.find({ email });
+  const user = await UserCollections.findOne({ email });
 
   if (!user) {
     throw createHttpError(401, 'Invalid email!');
   }
 
-  const passwordCompare = await bcrypt.compare(password, user.compare);
+  const passwordCompare = await bcrypt.compare(password, user.password);
 
   if (!passwordCompare) {
     throw createHttpError(401, 'Invalid password!');
@@ -39,9 +51,11 @@ export const loginUser = async ({ email, password }) => {
 
   await SessionCollections.deleteOne({ userId: user._id });
 
+  const sessionData = createSessionData();
+
   return SessionCollections.create({
     userId: user._id,
-    // ...sessionData,
+    ...sessionData,
   });
 };
 
