@@ -31,7 +31,7 @@ export const updateWaterEntryController = async (req, res) => {
 
 export const deleteWaterEntryController = async (req, res) => {
 
-  const {id: _id }= req.params;
+  const {id: _id } = req.params;
   const userId = req.user._id;
 
   const result = await deleteWaterEntry({_id, userId});
