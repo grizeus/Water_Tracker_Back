@@ -1,15 +1,14 @@
 import DayCollections from '../db/models/Day.js';
 
+import mongoose from "mongoose"
+
 //  Додавання запису про випиту воду
 export const addWaterEntry = async () => { };
 
 // Оновлення запису про випиту воду
-export const updateWaterEntry = async (userId, payload) => {
-    return DayCollections.findByIdAndUpdate(userId, {
-        ...payload,
-        new: true
-    })
-};
+export const updateWaterEntry = async ({ userId, payload }) => {
+    return await DayCollections.findByIdAndUpdate(userId, payload, { new: true });
+}
 
 // Видалення запису про випиту воду
 export const deleteWaterEntry = async () => { };
