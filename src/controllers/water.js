@@ -1,3 +1,4 @@
+import createHttpError from 'http-errors';
 import {
   addWaterEntry,
   updateWaterEntry,
@@ -13,14 +14,17 @@ export const addWaterEntryController = async (req, res) => { };
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
   const { id: _id } = req.params;
-  const { time, amount } = req.body;
+  const { time, amount, userId } = req.body;
 
+  console.log("User ID:", userId);
   console.log("Received ID:", _id);
   console.log("Received body:", { amount, time });
 
   const result = await updateWaterEntry(_id, { amount, time });
 
   console.log("Update result:", result);
+
+  if (!result) throw createHttpError(404, "User not found")
 
   res.status(200).json({
     data: result,

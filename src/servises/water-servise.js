@@ -7,6 +7,7 @@ export const addWaterEntry = async () => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async ({ userId, payload }) => {
+    console.log(userId);
     return await DayCollections.findByIdAndUpdate(userId, payload, { new: true });
 }
 

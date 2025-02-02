@@ -11,7 +11,7 @@ import { waterEntrySchema, dailyGoalSchema } from '../validation/water.js';
 
 const waterRouter = Router();
 
-waterRouter.use(authenticate);
+// waterRouter.use(authenticate);
 // Додавання запису по спожитій воді
 waterRouter.post(
   '/water-entry',
