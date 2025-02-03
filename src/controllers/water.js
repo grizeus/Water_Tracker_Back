@@ -30,15 +30,16 @@ export const updateWaterEntryController = async (req, res) => {
   });
 };
 
-// Видалення запису про воду
 export const deleteWaterEntryController = async (req, res) => {
   const { id: _id } = req.params;
   const userId = req.user._id;
 
-  const result = await deleteWaterEntry({ _id, userId });
-
-  if (!result) {
-    throw createHttpError(404, 'Entry not found');
+  try {
+    await deleteWaterEntry(_id, userId);
+  } catch (e) {
+    if (e instanceof Error) {
+      throw createHttpError(404, 'Entry not found');
+    }
   }
 
   res.status(204).send();

@@ -31,8 +31,17 @@ export const updateWaterEntry = async (id, payload, userId) => {
   return updatedEntry;
 };
 
-// Видалення запису про випиту воду
-export const deleteWaterEntry = async () => {};
+export const deleteWaterEntry = async (_id, userId) => {
+  const result = await DayCollections.updateOne(
+    { userId, 'entries._id': _id },
+    { $pull: { entries: { _id } } },
+    { new: true },
+  );
+
+  if (result.modifiedCount === 0) {
+    throw new Error('Entry not found');
+  }
+};
 
 // Отримання денної статистики
 export const getDailyWaterData = async () => {};
