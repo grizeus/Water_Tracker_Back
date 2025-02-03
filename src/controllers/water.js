@@ -47,8 +47,7 @@ export const deleteWaterEntryController = async (req, res) => {
 
 // Отримання місячної статистики
 export const getMonthlyWaterDataController = async (req, res) => {
-  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
-  const { userId } = req.body;
+  const userId = req.user._id;
   const { month } = req.params;
 
   if (!month) {
@@ -58,7 +57,7 @@ export const getMonthlyWaterDataController = async (req, res) => {
   const monthlyData = await getMonthlyWaterData(userId, normalizedMonth);
 
   res.status(200).json({
-    message: 'Success!',
+    message: 'Success!The following data were found for this month.',
     monthlyData,
   });
 };

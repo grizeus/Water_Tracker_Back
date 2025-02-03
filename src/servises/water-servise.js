@@ -50,13 +50,20 @@ export const getDailyWaterData = async () => {};
 export const getMonthlyWaterData = async (userId, month) => {
   const normalizedMonth = month.slice(0, 7);
 
+  const startOfMonth = new Date(`${normalizedMonth}-01`);
+  const endOfMonth = new Date(`${normalizedMonth}-01`);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
   const days = await DayCollections.find({
     userId: userId,
-    date: { $regex: `^${normalizedMonth}` },
+    date: { $gte: startOfMonth, $lt: endOfMonth },
   });
 
   if (!days || days.length === 0) {
-    return { data: [] };
+    return {
+      message: 'Nothing found.',
+      data: [],
+    };
   }
 
   const formattedData = days.map((day) => {
@@ -69,12 +76,12 @@ export const getMonthlyWaterData = async (userId, month) => {
     return {
       date: formattedDate,
       dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      percentage: ((day.progress / day.dailyGoal) * 100).toFixed(0) + '%',
+      percentage: day.progress.toFixed(0) + '%',
       entriesCount: day.entries.length,
     };
   });
 
-  return { data: formattedData };
+  return formattedData;
 };
 // Оновлення денної норми
 export const updateDailyWater = async () => {};

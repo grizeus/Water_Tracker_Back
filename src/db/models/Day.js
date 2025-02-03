@@ -4,9 +4,9 @@ import { handleSaveError, setUpdateSettings } from './hooks.js';
 const waterEntrySchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
   time: {
-    type: String,
+    type: Date,
     required: false,
-    default: () => new Date().toISOString(),
+    default: () => new Date(),
   },
   amount: {
     type: Number,
@@ -23,8 +23,8 @@ const waterTrackingSchema = new Schema({
     required: true,
   },
   date: {
-    type: String, // YYYY-MM-DD
-    required: true,
+    type: Date, // YYYY-MM-DD
+    required: new Date(),
   },
   dailyGoal: {
     type: Number,
