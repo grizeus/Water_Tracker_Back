@@ -6,9 +6,11 @@ properties:
   email:
     type: string
     format: email
+    example: user@example.com
   password:
     type: string
     format: password
+    example: 'P@ssw0rd!'
   name:
     type: string
-    description: Optional user name
+    description: Optional user name 'Jon Voles'
