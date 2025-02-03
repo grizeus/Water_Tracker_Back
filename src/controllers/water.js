@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 
 import {
   addWaterEntry,
@@ -10,7 +11,7 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-export const addWaterEntryController = async (req, res) => {};
+export const addWaterEntryController = async (req, res) => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
@@ -30,6 +31,7 @@ export const updateWaterEntryController = async (req, res) => {
   });
 };
 
+// Видалення запису про випиту воду
 export const deleteWaterEntryController = async (req, res) => {
   const { id: _id } = req.params;
   const userId = req.user._id;
@@ -62,5 +64,22 @@ export const getMonthlyWaterDataController = async (req, res) => {
     monthlyData,
   });
 };
+
+// отримання денної норми
+export const getDailyWaterDataController = async (req, res) => {
+  // const userId = req.user._id
+  const { userId } = req.body;
+
+  const result = await getDailyWaterData({ userId })
+
+  if (!result) return createHttpError(404, "User not found")
+
+  res.status(200).json({
+    status: 200,
+    data: result,
+    message: "Daily water goal retrieved successfully",
+  })
+}
+
 // Оновлення денної норми
-export const updateDailyWaterController = async (req, res) => {};
+export const updateDailyWaterController = async (req, res) => { };

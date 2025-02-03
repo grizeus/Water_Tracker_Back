@@ -1,7 +1,7 @@
 import DayCollections from '../db/models/Day.js';
 
 //  Додавання запису про випиту воду
-export const addWaterEntry = async () => {};
+export const addWaterEntry = async () => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
@@ -44,7 +44,20 @@ export const deleteWaterEntry = async (_id, userId) => {
 };
 
 // Отримання денної статистики
-export const getDailyWaterData = async () => {};
+export const getDailyWaterData = async ({ userId }) => {
+  const today = new Date().toISOString().split('T')[0];
+
+  const waterData = await WaterTracking.findOne({
+    userId: mongoose.Types.ObjectId(userId),
+    date: today
+  });
+
+  if (!waterData) return { dailyWaterNorm: 2000 };
+
+  return {
+    dailyWaterNorm: waterData.dailyGoal,
+  };
+};
 
 // Отримання місячної статистики
 export const getMonthlyWaterData = async (userId, month) => {
@@ -77,4 +90,4 @@ export const getMonthlyWaterData = async (userId, month) => {
   return { data: formattedData };
 };
 // Оновлення денної норми
-export const updateDailyWater = async () => {};
+export const updateDailyWater = async () => { };
