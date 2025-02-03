@@ -10,7 +10,4 @@ properties:
   password:
     type: string
     format: password
-    example: 'P@ssw0rd!'
-  name:
-    type: string
-    description: Optional user name 'Jon Voles'
+    example: StrongPassword123!

@@ -4,13 +4,8 @@ import { randomBytes } from 'crypto';
 
 import createHttpError from 'http-errors';
 
-import jwt from 'jsonwebtoken';
-
 import UserCollections from '../db/models/User.js';
-
 import SessionCollections from '../db/models/Session.js';
-
-import { getEnvVar } from '../utils/getEnvVar.js';
 
 import {
   accessTokenLifeTime,
@@ -25,15 +20,19 @@ const createSessionData = () => ({
 });
 
 export const registerUser = async (payload) => {
-  const user = await UserCollections.findOne({ email: payload.email });
-  if (user) throw createHttpError(409, 'Email in use');
-
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
-  return await UserCollections.create({
+  const newUser = await UserCollections.create({
     ...payload,
     password: encryptedPassword,
   });
+
+  const { _id, email, name } = newUser;
+  return {
+    _id: _id,
+    email: email,
+    name: name,
+  };
 };
 
 export const loginUser = async ({ email, password }) => {
@@ -59,9 +58,36 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
-export const refresh = async () => {};
+export const refresh = async ({ sessionId, refreshToken }) => {
+  const session = await SessionCollections.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
 
-export const logout = async () => {};
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  const newSession = createSessionData();
+
+  await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
+
+  return await SessionCollections.create({
+    userId: session.userId,
+    ...newSession,
+  });
+};
+
+export const logout = async (sessionId) => {
+  await SessionCollections.deleteOne({ _id: sessionId });
+};
 
 export const getUser = (filter) => UserCollections.findOne(filter);
 

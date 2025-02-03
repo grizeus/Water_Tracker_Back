@@ -7,9 +7,9 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: Documentation of the application "Water Tracker"
 tags:
-  - name: Auth
+  - name: Authentication
     description: Operations about Auth
-  - name: User
+  - name: Users
     description: Operations about User
   - name: Water
     description: Operations about Water
