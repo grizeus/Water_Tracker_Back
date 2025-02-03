@@ -18,7 +18,9 @@ const waterEntrySchema = new Schema({
 
 const waterTrackingSchema = new Schema({
   userId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   date: {
     type: String, // YYYY-MM-DD
