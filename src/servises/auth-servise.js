@@ -25,9 +25,6 @@ const createSessionData = () => ({
 });
 
 export const registerUser = async (payload) => {
-  const user = await UserCollections.findOne({ email: payload.email });
-  if (user) throw createHttpError(409, 'Email in use');
-
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
   return await UserCollections.create({
@@ -86,7 +83,9 @@ export const refresh = async ({ sessionId, refreshToken }) => {
   });
 };
 
-export const logout = async () => {};
+export const logout = async (sessionId) => {
+  await SessionCollections.deleteOne({ _id: sessionId });
+};
 
 export const getUser = (filter) => UserCollections.findOne(filter);
 
