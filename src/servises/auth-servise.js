@@ -59,7 +59,32 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
-export const refresh = async () => {};
+export const refresh = async ({ sessionId, refreshToken }) => {
+  const session = await SessionCollections.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  const newSession = createSessionData();
+
+  await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
+
+  return await SessionCollections.create({
+    userId: session.userId,
+    ...newSession,
+  });
+};
 
 export const logout = async () => {};
 
