@@ -1,6 +1,6 @@
 tags:
   - Water
-summary: Update a specific water entry
+summary: Update water entry
 operationId: updateWaterEntry
 description: 'Update water entry by id'
 security:
