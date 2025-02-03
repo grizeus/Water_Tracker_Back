@@ -1,15 +1,34 @@
-import createHttpError from 'http-errors';
 import DayCollections from '../db/models/Day.js';
 
 //  Додавання запису про випиту воду
 export const addWaterEntry = async () => {};
 
 // Оновлення запису про випиту воду
-export const updateWaterEntry = async (userId, payload) => {
-  return DayCollections.findByIdAndUpdate(userId, {
-    ...payload,
-    new: true,
-  });
+export const updateWaterEntry = async (id, payload, userId) => {
+  console.log('Searching for:', { userId, entryId: id, payload });
+
+  // Оновлення конкретного запису в масиві entries
+  const result = await DayCollections.findOneAndUpdate(
+    {
+      userId: userId,
+      'entries._id': id,
+    },
+    {
+      $set: {
+        'entries.$[elem].amount': payload.amount,
+        'entries.$[elem].time': payload.time,
+      },
+    },
+    {
+      new: true,
+      arrayFilters: [{ 'elem._id': id }],
+    },
+  );
+  const updatedEntry = result.entries.find(
+    (entry) => entry._id.toString() === id,
+  );
+  console.log('Update result:', result);
+  return updatedEntry;
 };
 
 // Видалення запису про випиту воду
