@@ -12,6 +12,7 @@ export const waterEntrySchema = Joi.object({
     'string.base': 'Time must be a string.',
     'string.pattern.base': 'Time format is invalid.',
   }),
+  userId: Joi.string().required(),
 });
 
 export const dailyGoalSchema = Joi.object({

@@ -14,10 +14,11 @@ export const addWaterEntryController = async (req, res) => {};
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
-  const { id: _id } = req.params;
+  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
+  const { id: id } = req.params;
   const { time, amount, userId } = req.body;
 
-  const result = await updateWaterEntry(_id, { amount, time });
+  const result = await updateWaterEntry(id, { amount, time }, userId);
 
   console.log('Update result:', result);
 
@@ -45,6 +46,7 @@ export const deleteWaterEntryController = async (req, res) => {
 
 // Отримання місячної статистики
 export const getMonthlyWaterDataController = async (req, res) => {
+  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
   const { userId } = req.body;
   const { month } = req.params;
 
