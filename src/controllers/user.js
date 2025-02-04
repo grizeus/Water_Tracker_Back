@@ -5,25 +5,29 @@ import {
   updateUserById,
 } from '../servises/user-servise.js';
 
-
 export const getUserController = async (req, res, next) => {
-  const userId = req.params.id;
-        const user = await getUserById(userId);
+  const userId = req.user._id;
+  const user = await getUserById(userId);
 
-        if (!user) {
-            return res.status(404).json({
-                status: 404,
-                message: "User not found!",
-            });
-        }
+  if (!user) {
+    return res.status(404).json({
+      status: 404,
+      message: 'User not found!',
+    });
+  }
 
-        res.json({
-            status: 200,
-            message: "Successfully found user!",
-            data: user,
-        });
+  res.json({
+    status: 200,
+    message: 'Successfully found user!',
+    data: {
+      email: user.email,
+      gender: user.gender,
+      name: user.name,
+      avatarURL: user.avatarURL,
+      dailyGoal: user.dailyGoal,
+    },
+  });
 };
-
 
 export const updateUserController = async (req, res, next) => {
   const { id: userId } = req.params;

@@ -19,7 +19,7 @@ export const updateAvatarById = async (userId, avatarURL) => {
   const updatingResult = await UserCollections.findOneAndUpdate(
     { _id: userId },
     { avatar: avatarURL }, // Поле `avatar` може змінюватися відповідно до вашої моделі користувача
-    { new: true }
+    { new: true },
   );
 
   return updatingResult;
