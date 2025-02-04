@@ -25,7 +25,9 @@ export const updateWaterEntryController = async (req, res) => {
 
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
-  if (!result) throw createHttpError(404, "Water entry not found");
+  if (!result) {
+    throw createHttpError(404, "Water entry not found");
+  }
 
   res.status(200).json({
     data: result,
