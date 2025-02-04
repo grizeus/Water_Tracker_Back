@@ -31,19 +31,6 @@ export const updateWaterEntryController = async (req, res) => {
     data: result,
     message: 'Water entry updated successfully',
   });
-  // const { id: id } = req.params;
-  // const { time, amount, userId } = req.body;
-
-  // const result = await updateWaterEntry(id, { amount, time }, userId);
-
-  // console.log('Update result:', result);
-
-  // if (!result) throw createHttpError(404, 'User not found');
-
-  // res.status(200).json({
-  //   data: result,
-  //   message: 'Water entry updated successfully',
-  // });
 };
 
 // Видалення запису про випиту воду
