@@ -15,20 +15,35 @@ export const addWaterEntryController = async (req, res) => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
-  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
+  const userId = req.user._id;
+
   const { id: id } = req.params;
-  const { time, amount, userId } = req.body;
+
+  const { time, amount } = req.body;
+
+  if (!id) throw createHttpError(404, 'Entry not found');
 
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
-  console.log('Update result:', result);
-
-  if (!result) throw createHttpError(404, 'User not found');
+  if (!result) throw createHttpError(404, "Water entry not found");
 
   res.status(200).json({
     data: result,
     message: 'Water entry updated successfully',
   });
+  // const { id: id } = req.params;
+  // const { time, amount, userId } = req.body;
+
+  // const result = await updateWaterEntry(id, { amount, time }, userId);
+
+  // console.log('Update result:', result);
+
+  // if (!result) throw createHttpError(404, 'User not found');
+
+  // res.status(200).json({
+  //   data: result,
+  //   message: 'Water entry updated successfully',
+  // });
 };
 
 // Видалення запису про випиту воду
