@@ -16,32 +16,38 @@ const waterEntrySchema = new Schema({
   },
 });
 
-const waterTrackingSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+const waterTrackingSchema = new Schema(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    date: {
+      type: Date, // YYYY-MM-DD
+      required: new Date(),
+    },
+    dailyGoal: {
+      type: Number,
+      required: true,
+      min: 50,
+      max: 15000,
+      default: 2000,
+    },
+    entries: {
+      type: [waterEntrySchema],
+      default: [],
+    },
+    progress: {
+      type: Number,
+      default: 0,
+    },
   },
-  date: {
-    type: Date, // YYYY-MM-DD
-    required: new Date(),
+  {
+    versionKey: false,
+    timestamps: true,
   },
-  dailyGoal: {
-    type: Number,
-    required: true,
-    min: 50,
-    max: 15000,
-    default: 2000,
-  },
-  entries: {
-    type: [waterEntrySchema],
-    default: [],
-  },
-  progress: {
-    type: Number,
-    default: 0,
-  },
-});
+);
 
 //  Функція для перерахунку прогресу
 const calculateProgress = (entries, dailyGoal) => {
