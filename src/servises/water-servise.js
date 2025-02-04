@@ -44,19 +44,17 @@ export const deleteWaterEntry = async (_id, userId) => {
 };
 
 // Отримання денної статистики
-export const getDailyWaterData = async ({ userId }) => {
-  const today = new Date().toISOString().split('T')[0];
+export const getDailyWaterData = async (userId) => {
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const waterData = await WaterTracking.findOne({
-    userId: mongoose.Types.ObjectId(userId),
-    date: today
+  const data = await DayCollections.findOne({
+    userId: userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
   });
 
-  if (!waterData) return { dailyWaterNorm: 2000 };
-
-  return {
-    dailyWaterNorm: waterData.dailyGoal,
-  };
+  return data ? { process: data.progress, entries: data.entries } : null
 };
 
 // Отримання місячної статистики
