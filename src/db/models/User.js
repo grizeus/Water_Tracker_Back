@@ -38,6 +38,13 @@ const authSchema = new Schema(
       default:
         'https://asset.cloudinary.com/dtyqyfest/f14d60e17eae987dfc70575c82cfe529',
     },
+    dailyGoal: {
+      type: Number,
+      required: true,
+      min: 50,
+      max: 15000,
+      default: 2000,
+    },
     token: {
       type: String,
       default: null,
