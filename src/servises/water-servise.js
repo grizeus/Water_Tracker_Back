@@ -50,11 +50,11 @@ export const getDailyWaterData = async (userId) => {
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
   const data = await DayCollections.findOne({
-    userId,
-    data: { $gte: startOfDay, $lte: endOfDay }
+    userId: userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
   });
 
-  return data ? { progress: data.progress, entries: data.entries } : null
+  return data ? { process: data.progress, entries: data.entries } : null
 };
 
 // Отримання місячної статистики
