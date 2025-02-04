@@ -5,7 +5,23 @@ import {
   updateUserById,
 } from '../servises/user-servise.js';
 
-export const getUserController = async (req, res, next) => {};
+export const getUserController = async (req, res, next) => {
+  const userId = req.params.id;
+        const user = await getUserById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                status: 404,
+                message: "User not found!",
+            });
+        }
+
+        res.json({
+            status: 200,
+            message: "Successfully found user!",
+            data: user,
+        });
+};
 
 export const updateUserController = async (req, res, next) => {
   const { id: userId } = req.params;
