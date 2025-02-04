@@ -11,7 +11,7 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-export const addWaterEntryController = async (req, res) => { };
+export const addWaterEntryController = async (req, res) => {};
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
