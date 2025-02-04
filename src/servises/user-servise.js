@@ -16,6 +16,11 @@ export const updateUserById = async (userId, updatedData) => {
 };
 
 export const updateAvatarById = async (userId, avatarURL) => {
-  const Hello="world";
-  console.log(Hello);
+  const updatingResult = await UserCollections.findOneAndUpdate(
+    { _id: userId },
+    { avatar: avatarURL }, // Поле `avatar` може змінюватися відповідно до вашої моделі користувача
+    { new: true }
+  );
+
+  return updatingResult;
 };
