@@ -1,11 +1,13 @@
 import DayCollections from '../db/models/Day.js';
+import UserCollections from '../db/models/User.js';
 
 //  Додавання запису про випиту воду
-export const addWaterEntry = async () => { };
+export const addWaterEntry = async () => {};
 
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
+  // Оновлення конкретного запису в масиві entries
   const result = await DayCollections.findOneAndUpdate(
     {
       userId: userId,
@@ -23,34 +25,12 @@ export const updateWaterEntry = async (id, payload, userId) => {
     },
   );
 
-  if (!result) return null
+  if (!result) return null;
 
   const updatedEntry = result.entries.find(
     (entry) => entry._id.toString() === id,
   );
-  return updatedEntry
-
-  // Оновлення конкретного запису в масиві entries
-  // const result = await DayCollections.findOneAndUpdate(
-  //   {
-  //     userId: userId,
-  //     'entries._id': id,
-  //   },
-  //   {
-  //     $set: {
-  //       'entries.$[elem].amount': payload.amount,
-  //       'entries.$[elem].time': payload.time,
-  //     },
-  //   },
-  //   {
-  //     new: true,
-  //     arrayFilters: [{ 'elem._id': id }],
-  //   },
-  // );
-  // const updatedEntry = result.entries.find(
-  //   (entry) => entry._id.toString() === id,
-  // );
-  // return updatedEntry;
+  return updatedEntry;
 };
 
 export const deleteWaterEntry = async (_id, userId) => {
@@ -76,7 +56,7 @@ export const getDailyWaterData = async (userId) => {
     date: { $gte: startOfDay, $lte: endOfDay },
   });
 
-  return data ? { process: data.progress, entries: data.entries } : null
+  return data ? { process: data.progress, entries: data.entries } : null;
 };
 
 // Отримання місячної статистики
@@ -117,4 +97,29 @@ export const getMonthlyWaterData = async (userId, month) => {
   return formattedData;
 };
 // Оновлення денної норми
-export const updateDailyWater = async () => { };
+export const updateDailyWater = async (userId, dailyGoal) => {
+  let dailyRecord = await DayCollections.findOne({
+    userId,
+  });
+
+  if (!dailyRecord) {
+    dailyRecord = await DayCollections.create({
+      userId,
+      dailyGoal,
+    });
+  } else {
+    dailyRecord = await DayCollections.findOneAndUpdate(
+      { userId },
+      { dailyGoal },
+      { new: true },
+    );
+  }
+
+  const updatedUserDailyGoal = await UserCollections.findOneAndUpdate(
+    { _id: userId },
+    { dailyGoal: dailyGoal },
+    { new: true },
+  );
+
+  return { dailyRecord, updatedUserDailyGoal };
+};

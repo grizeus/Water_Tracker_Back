@@ -11,10 +11,7 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-
-
 export const addWaterEntryController = async (req, res) => { };
-
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
@@ -84,7 +81,23 @@ export const getDailyWaterDataController = async (req, res) => {
     data: result,
     message: 'Daily water goal retrieved successfully',
   });
-}
+};
 
 // Оновлення денної норми
-export const updateDailyWaterController = async (req, res) => { };
+export const updateDailyWaterController = async (req, res) => {
+  const userId = req.user._id;
+  const { dailyGoal } = req.body;
+
+  const { dayRecord, updatedUserDailyGoal } = await updateDailyWater(
+    userId,
+    dailyGoal,
+  );
+
+  if (!dayRecord && !updatedUserDailyGoal)
+    throw createHttpError(404, 'Users daily goal not found');
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully updated daily goal!',
+  });
+};
