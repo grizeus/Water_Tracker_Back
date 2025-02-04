@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 
 import {
   addWaterEntry,
@@ -10,41 +11,26 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-export const addWaterEntryController = async (req, res) => {
-  try {
-    const { userId, amount } = req.body;
-
-    const result = await addWaterEntry(userId, amount);
-    return res.status(result.success ? 200 : 400).json(result);
-  } catch (error) {
-    return res.status(500).json({ success: false, message: 'Ошибка сервера', error: error.message });
-  }
-};
-// async (req, res) => {
-//   const { time, amount, userId } = req.body;
-//   const result = await addWaterEntry({ amount, time }, userId);
-//   // console.log("Amount received:", req.body.amount);
 
 
-//   res.status(201).json({
-//     data: result,
-//     message: 'Water entry added successfully',
-//   });
+export const addWaterEntryController = async (req, res) => { };
 
-//   if (!result) throw createHttpError(404, 'User not found');
-// };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
-  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
+  const userId = req.user._id;
+
   const { id: id } = req.params;
-  const { time, amount, userId } = req.body;
+
+  const { time, amount } = req.body;
+
+  if (!id) throw createHttpError(404, 'Entry not found');
 
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
-  console.log('Update result:', result);
-
-  if (!result) throw createHttpError(404, 'User not found');
+  if (!result) {
+    throw createHttpError(404, "Water entry not found");
+  }
 
   res.status(200).json({
     data: result,
@@ -52,6 +38,7 @@ export const updateWaterEntryController = async (req, res) => {
   });
 };
 
+// Видалення запису про випиту воду
 export const deleteWaterEntryController = async (req, res) => {
   const { id: _id } = req.params;
   const userId = req.user._id;
@@ -69,8 +56,7 @@ export const deleteWaterEntryController = async (req, res) => {
 
 // Отримання місячної статистики
 export const getMonthlyWaterDataController = async (req, res) => {
-  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
-  const { userId } = req.body;
+  const userId = req.user._id;
   const { month } = req.params;
 
   if (!month) {
@@ -80,9 +66,25 @@ export const getMonthlyWaterDataController = async (req, res) => {
   const monthlyData = await getMonthlyWaterData(userId, normalizedMonth);
 
   res.status(200).json({
-    message: 'Success!',
+    message: 'Success!The following data were found for this month.',
     monthlyData,
   });
 };
+
+// отримання денної норми
+export const getDailyWaterDataController = async (req, res) => {
+  const userId = req.user._id;
+
+  const result = await getDailyWaterData(userId);
+
+  if (!result) throw createHttpError(404, 'No daily water found');
+
+  res.status(200).json({
+    status: 200,
+    data: result,
+    message: 'Daily water goal retrieved successfully',
+  });
+}
+
 // Оновлення денної норми
-export const updateDailyWaterController = async (req, res) => {};
+export const updateDailyWaterController = async (req, res) => { };

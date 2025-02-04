@@ -1,0 +1,17 @@
+type: object
+required:
+  - _id
+  - time
+  - amount
+properties:
+  _id:
+    type: number
+    example: 65e4decdd286b30065d54af9
+  time:
+    type: string
+    format: HH:mm
+    example: '06:30'
+  amount:
+    type: string
+    minimum: 50
+    maximum: 5000

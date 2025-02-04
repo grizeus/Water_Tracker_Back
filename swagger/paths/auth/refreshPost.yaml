@@ -4,6 +4,12 @@ summary: Refresh session for user
 operationId: refreshSession
 description: 'Get refresh session for user'
 security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: ../../components/schemas/auth/refresh.yaml
 responses:
   '200':
     description: Successfully refreshed a session
@@ -28,5 +34,9 @@ responses:
                 accessToken:
                   type: string
                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  '400':
+    $ref: ../../components/responses/400.yaml
   '401':
     $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: ../../components/responses/500.yaml

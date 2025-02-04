@@ -1,0 +1,23 @@
+tags:
+  - Water
+summary: Get user's daily water goal
+operationId: getDailyWaterEntry
+description: Returns the daily water intake goal for the logged-in user.
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Successfully retrieved the daily water goal
+    content:
+      application/json:
+        schema:
+          type: number
+          properties:
+            dailyWaterNorm:
+              description: The daily water intake goal in milliliters
+  '401':
+    $ref: ../../components/responses/401.yaml
+  '404':
+    $ref: '../../components/responses/404.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'
