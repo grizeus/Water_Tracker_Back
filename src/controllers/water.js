@@ -66,18 +66,17 @@ export const getMonthlyWaterDataController = async (req, res) => {
 
 // отримання денної норми
 export const getDailyWaterDataController = async (req, res) => {
-  // const userId = req.user._id
-  const { userId } = req.body;
+  const userId = req.user._id;
 
-  const result = await getDailyWaterData({ userId })
+  const result = await getDailyWaterData(userId);
 
-  if (!result) return createHttpError(404, "User not found")
+  if (!result) throw createHttpError(404, 'No daily water found');
 
   res.status(200).json({
     status: 200,
     data: result,
-    message: "Daily water goal retrieved successfully",
-  })
+    message: 'Daily water goal retrieved successfully',
+  });
 }
 
 // Оновлення денної норми
