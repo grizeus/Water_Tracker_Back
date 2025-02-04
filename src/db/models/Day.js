@@ -30,7 +30,7 @@ const waterTrackingSchema = new Schema(
     },
     date: {
       type: Date, // YYYY-MM-DD
-      required: new Date(),
+      default: new Date(),
     },
     dailyGoal: {
       type: Number,
