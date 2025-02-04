@@ -4,9 +4,14 @@ import { handleSaveError, setUpdateSettings } from './hooks.js';
 const waterEntrySchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
   time: {
-    type: Date,
-    required: false,
-    default: () => new Date(),
+    type: String,
+    required: true,
+    default: function () {
+      return new Date().toLocaleTimeString('uk-UA', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    },
   },
   amount: {
     type: Number,
@@ -49,20 +54,21 @@ const waterTrackingSchema = new Schema(
   },
 );
 
-//  Функція для перерахунку прогресу
+// Функція для перерахунку прогресу
 const calculateProgress = (entries, dailyGoal) => {
   const totalConsumed = entries.reduce((sum, entry) => sum + entry.amount, 0);
   return dailyGoal > 0 ? Math.min((totalConsumed / dailyGoal) * 100, 100) : 0;
 };
 
+// Хук для перерахунку прогресу перед збереженням
 waterTrackingSchema.pre('save', function (next) {
   this.progress = calculateProgress(this.entries, this.dailyGoal);
   next();
 });
 
+// Хук для перерахунку прогресу при оновленні запису
 waterTrackingSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
-
   const existingDoc = await this.model.findOne(this.getQuery());
 
   if (!existingDoc) {
@@ -71,10 +77,12 @@ waterTrackingSchema.pre('findOneAndUpdate', async function (next) {
 
   let updatedEntries = [...existingDoc.entries];
 
+  // Додавання нових записів
   if (update.$push && update.$push.entries) {
-    updatedEntries.push(update.$push.entries);
+    updatedEntries.push(...update.$push.entries);
   }
 
+  // Видалення записів
   if (update.$pull && update.$pull.entries) {
     const condition = update.$pull.entries;
     updatedEntries = updatedEntries.filter((entry) => {
@@ -84,6 +92,7 @@ waterTrackingSchema.pre('findOneAndUpdate', async function (next) {
     });
   }
 
+  // Оновлення конкретного запису
   if (update.$set && update.$set['entries.$']) {
     const updatedEntry = update.$set['entries.$'];
     updatedEntries = updatedEntries.map((entry) =>
@@ -93,15 +102,30 @@ waterTrackingSchema.pre('findOneAndUpdate', async function (next) {
     );
   }
 
+  // Оновлення прогресу після змін
   update.$set = update.$set || {};
+
+  // Оновлюємо прогрес на основі нових значень
   update.$set.progress = calculateProgress(
     updatedEntries,
     update.$set.dailyGoal || existingDoc.dailyGoal,
   );
 
+  // Якщо змінився dailyGoal, треба пересчитати прогрес
+  if (
+    update.$set.dailyGoal &&
+    update.$set.dailyGoal !== existingDoc.dailyGoal
+  ) {
+    update.$set.progress = calculateProgress(
+      updatedEntries,
+      update.$set.dailyGoal,
+    );
+  }
+
   next();
 });
 
+// Хук для обробки помилок
 waterTrackingSchema.post('save', handleSaveError);
 waterTrackingSchema.pre('findOneAndUpdate', setUpdateSettings);
 waterTrackingSchema.post('findOneAndUpdate', handleSaveError);
