@@ -1,7 +1,37 @@
 import DayCollections from '../db/models/Day.js';
 
 //  Додавання запису про випиту воду
-export const addWaterEntry = async () => {};
+export const addWaterEntry = async (userId, amount, time) => {
+  try {
+    // const newEntry = {
+    //   _id: userId,
+    //   time,
+    //   amount,
+    // };
+
+    // Добавляем запись в массив entries
+    const result = await DayCollections.updateOne(
+      { userId },
+      { $push: { entries: { amount: '', time: '' } } },
+      { upsert: true }
+    );
+
+    return { success: true, message: 'Запись добавлена', data: result.entries };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
+// async (payload) => await DayCollections.create(payload);
+
+// async () => {
+//   const result = await DayCollections.create(
+//     { new: true },
+//     { $push: { entries: { amount: '', time: '' } } },
+//     // { date: new Date().toISOString() },
+//   );
+//   return result;
+// };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {

@@ -10,7 +10,29 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-export const addWaterEntryController = async (req, res) => {};
+export const addWaterEntryController = async (req, res) => {
+  try {
+    const { userId, amount } = req.body;
+
+    const result = await addWaterEntry(userId, amount);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Ошибка сервера', error: error.message });
+  }
+};
+// async (req, res) => {
+//   const { time, amount, userId } = req.body;
+//   const result = await addWaterEntry({ amount, time }, userId);
+//   // console.log("Amount received:", req.body.amount);
+
+
+//   res.status(201).json({
+//     data: result,
+//     message: 'Water entry added successfully',
+//   });
+
+//   if (!result) throw createHttpError(404, 'User not found');
+// };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
