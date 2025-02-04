@@ -97,17 +97,17 @@ export const getMonthlyWaterData = async (userId, month) => {
 };
 // Оновлення денної норми
 export const updateDailyWater = async (userId, dailyGoal) => {
-  let user = await DayCollections.findOne({
+  let dailyRecord = await DayCollections.findOne({
     userId,
   });
 
-  if (!user) {
-    user = await DayCollections.create({
+  if (!dailyRecord) {
+    dailyRecord = await DayCollections.create({
       userId,
       dailyGoal,
     });
   } else {
-    user = await DayCollections.findOneAndUpdate(
+    dailyRecord = await DayCollections.findOneAndUpdate(
       { userId },
       { dailyGoal },
       { new: true },
@@ -120,5 +120,5 @@ export const updateDailyWater = async (userId, dailyGoal) => {
     { new: true },
   );
 
-  return { user, updatedUserDailyGoal };
+  return { dailyRecord, updatedUserDailyGoal };
 };
