@@ -1,6 +1,6 @@
 import UserCollections from '../db/models/User.js';
 
-export const getUserById = async (userId) => {};
+export const getUserById = async (userId) => UserCollections.findById(userId);
 
 export const updateUserById = async (userId, updatedData) => {
   //TODO: add search by sessionID and userID

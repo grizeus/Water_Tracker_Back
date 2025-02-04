@@ -15,15 +15,19 @@ export const addWaterEntryController = async (req, res) => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
-  // const userId = req.user._id; передати айді у сервіс !!!!!!!!!!
+  const userId = req.user._id;
+
   const { id: id } = req.params;
-  const { time, amount, userId } = req.body;
+
+  const { time, amount } = req.body;
+
+  if (!id) throw createHttpError(404, 'Entry not found');
 
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
-  console.log('Update result:', result);
-
-  if (!result) throw createHttpError(404, 'User not found');
+  if (!result) {
+    throw createHttpError(404, "Water entry not found");
+  }
 
   res.status(200).json({
     data: result,
@@ -66,18 +70,17 @@ export const getMonthlyWaterDataController = async (req, res) => {
 
 // отримання денної норми
 export const getDailyWaterDataController = async (req, res) => {
-  // const userId = req.user._id
-  const { userId } = req.body;
+  const userId = req.user._id;
 
-  const result = await getDailyWaterData({ userId })
+  const result = await getDailyWaterData(userId);
 
-  if (!result) return createHttpError(404, "User not found")
+  if (!result) throw createHttpError(404, 'No daily water found');
 
   res.status(200).json({
     status: 200,
     data: result,
-    message: "Daily water goal retrieved successfully",
-  })
+    message: 'Daily water goal retrieved successfully',
+  });
 }
 
 // Оновлення денної норми

@@ -5,9 +5,6 @@ export const addWaterEntry = async () => { };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
-  console.log('Searching for:', { userId, entryId: id, payload });
-
-  // Оновлення конкретного запису в масиві entries
   const result = await DayCollections.findOneAndUpdate(
     {
       userId: userId,
@@ -24,11 +21,35 @@ export const updateWaterEntry = async (id, payload, userId) => {
       arrayFilters: [{ 'elem._id': id }],
     },
   );
+
+  if (!result) return null
+
   const updatedEntry = result.entries.find(
     (entry) => entry._id.toString() === id,
   );
-  console.log('Update result:', result);
-  return updatedEntry;
+  return updatedEntry
+
+  // Оновлення конкретного запису в масиві entries
+  // const result = await DayCollections.findOneAndUpdate(
+  //   {
+  //     userId: userId,
+  //     'entries._id': id,
+  //   },
+  //   {
+  //     $set: {
+  //       'entries.$[elem].amount': payload.amount,
+  //       'entries.$[elem].time': payload.time,
+  //     },
+  //   },
+  //   {
+  //     new: true,
+  //     arrayFilters: [{ 'elem._id': id }],
+  //   },
+  // );
+  // const updatedEntry = result.entries.find(
+  //   (entry) => entry._id.toString() === id,
+  // );
+  // return updatedEntry;
 };
 
 export const deleteWaterEntry = async (_id, userId) => {
@@ -44,19 +65,17 @@ export const deleteWaterEntry = async (_id, userId) => {
 };
 
 // Отримання денної статистики
-export const getDailyWaterData = async ({ userId }) => {
-  const today = new Date().toISOString().split('T')[0];
+export const getDailyWaterData = async (userId) => {
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const waterData = await WaterTracking.findOne({
-    userId: mongoose.Types.ObjectId(userId),
-    date: today
+  const data = await DayCollections.findOne({
+    userId: userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
   });
 
-  if (!waterData) return { dailyWaterNorm: 2000 };
-
-  return {
-    dailyWaterNorm: waterData.dailyGoal,
-  };
+  return data ? { process: data.progress, entries: data.entries } : null
 };
 
 // Отримання місячної статистики
