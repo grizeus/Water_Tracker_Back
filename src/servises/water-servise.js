@@ -99,64 +99,78 @@ export const getDailyWaterData = async (userId) => {
 // Отримання місячної статистики
 export const getMonthlyWaterData = async (userId, month) => {
   const normalizedMonth = month.slice(0, 7);
-
-  const startOfMonth = new Date(`${normalizedMonth}-01`);
-  const endOfMonth = new Date(`${normalizedMonth}-01`);
+  const startOfMonth = new Date(`${normalizedMonth}-01T00:00:00.000Z`);
+  const endOfMonth = new Date(startOfMonth);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-  const days = await WaterCollections.find({
+  // Отримуємо всі записи води за місяць
+  const waterEntries = await WaterCollections.find({
     userId: userId,
-    date: { $gte: startOfMonth, $lt: endOfMonth },
-  });
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+  }).lean();
 
-  if (!days || days.length === 0) {
-    return {
-      message: 'Nothing found.',
-      data: [],
-    };
+  if (!waterEntries.length) {
+    return [];
   }
 
-  const formattedData = days.map((day) => {
-    const dateObj = new Date(day.date);
+  // Групуємо дані по днях
+  const dailyData = waterEntries.reduce((acc, entry) => {
+    const dateObj = new Date(entry.createdAt);
     const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString(
       'en-US',
       { month: 'long' },
     )}`;
 
-    return {
-      date: formattedDate,
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      percentage: day.progress.toFixed(0) + '%',
-      entriesCount: day.entries.length,
-    };
-  });
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = {
+        date: formattedDate,
+        totalAmount: 0,
+        entriesCount: 0,
+      };
+    }
 
-  return formattedData;
+    acc[formattedDate].totalAmount += entry.amount;
+    acc[formattedDate].entriesCount += 1;
+
+    return acc;
+  }, {});
+
+  // Форматуємо вихідні дані
+  return Object.values(dailyData).map((day) => ({
+    date: day.date,
+    dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
+    percentage: ((day.totalAmount / day.dailyGoal) * 100).toFixed(0) + '%',
+    entriesCount: day.entriesCount,
+  }));
 };
+
 // Оновлення денної норми
 export const updateDailyWater = async (userId, dailyGoal) => {
-  let dailyRecord = await WaterCollections.findOne({
-    userId,
-  });
-
-  if (!dailyRecord) {
-    dailyRecord = await WaterCollections.create({
-      userId,
-      dailyGoal,
-    });
-  } else {
-    dailyRecord = await WaterCollections.findOneAndUpdate(
-      { userId },
-      { dailyGoal },
-      { new: true },
-    );
+  // Обмеження на максимальне значення
+  if (dailyGoal > 15000) {
+    throw new Error('Daily water goal cannot exceed 15000 ml.');
   }
 
-  const updatedUserDailyGoal = await UserCollections.findOneAndUpdate(
-    { _id: userId },
-    { dailyGoal: dailyGoal },
+  // Оновлюємо денну норму в UserCollections
+  const updatedUser = await UserCollections.findByIdAndUpdate(
+    userId,
+    { dailyGoal },
     { new: true },
   );
 
-  return { dailyRecord, updatedUserDailyGoal };
+  if (!updatedUser) {
+    throw new Error('User not found.');
+  }
+
+  // Оновлюємо або створюємо запис у WaterCollections
+  let dailyRecord = await WaterCollections.findOne({ userId });
+
+  if (!dailyRecord) {
+    dailyRecord = await WaterCollections.create({ userId, dailyGoal });
+  } else {
+    dailyRecord.dailyGoal = dailyGoal;
+    await dailyRecord.save();
+  }
+
+  return { updatedUser, dailyRecord };
 };
