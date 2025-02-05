@@ -29,14 +29,14 @@ paths:
   /auth/refresh:
     post:
       $ref: '../swagger/paths/auth/refreshPost.yaml'
-  /user/{id}:
+  /user:
     get:
-      $ref: '../swagger/paths/user/{id}/userGet.yaml'
+      $ref: '../swagger/paths/user/userGet.yaml'
     patch:
-      $ref: '../swagger/paths/user/{id}/userUpdatePatch.yaml'
-  /user/{id}/avatar:
+      $ref: '../swagger/paths/user/userUpdatePatch.yaml'
+  /user/avatar:
     patch:
-      $ref: '../swagger/paths/user/{id}/userAvatarUpdate.yaml'
+      $ref: '../swagger/paths/user/userAvatarUpdate.yaml'
   /water/water-entry:
     post:
       $ref: '../swagger/paths/water/waterPost.yaml'

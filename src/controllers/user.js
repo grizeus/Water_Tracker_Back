@@ -23,7 +23,6 @@ export const getUserController = async (req, res, next) => {
     status: 200,
     message: 'Successfully found user!',
     data: {
-      _id: user._id,
       email: user.email,
       gender: user.gender,
       name: user.name,
@@ -48,7 +47,13 @@ export const updateUserController = async (req, res, next) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully updated user',
-    data: newUserData,
+    data: {
+      email: newUserData.email,
+      gender: newUserData.gender,
+      name: newUserData.name,
+      avatarURL: newUserData.avatarURL,
+      dailyGoal: newUserData.dailyGoal,
+    },
   });
 };
 

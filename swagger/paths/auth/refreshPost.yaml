@@ -3,13 +3,8 @@ tags:
 summary: Refresh session for user
 operationId: refreshSession
 description: 'Get refresh session for user'
-security: []
-requestBody:
-  required: true
-  content:
-    application/json:
-      schema:
-        $ref: ../../components/schemas/auth/refresh.yaml
+security:
+  - bearerAuth: []
 responses:
   '200':
     description: Successfully refreshed a session
@@ -20,7 +15,6 @@ responses:
           required:
             - status
             - message
-            - data
           properties:
             status:
               type: integer
@@ -28,12 +22,6 @@ responses:
             message:
               type: string
               example: Successfully refreshed a session!
-            data:
-              type: object
-              properties:
-                accessToken:
-                  type: string
-                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   '400':
     $ref: ../../components/responses/400.yaml
   '401':
