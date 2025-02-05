@@ -453,7 +453,7 @@
         }
       }
     },
-    "/water/water-entry": {
+    "/water/entry": {
       "post": {
         "tags": [
           "Water"
@@ -473,15 +473,21 @@
                 "type": "object",
                 "required": [
                   "date",
-                  "amount"
+                  "amount",
+                  "userId"
                 ],
                 "properties": {
+                  "userId": {
+                    "description": "User id",
+                    "type": "string",
+                    "example": "677ef8ffd965e35fbbcc5121"
+                  },
                   "date": {
                     "description": "Date and time of water intake",
                     "type": "string",
-                    "example": "10:20"
+                    "example": "1970-01-01-06:30"
                   },
-                  "volume": {
+                  "amount": {
                     "description": "The volume of water in ml",
                     "type": "number",
                     "minimum": 50,
@@ -507,7 +513,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Successfully created an entry!"
+                      "example": "Water entry added successfully"
                     },
                     "data": {
                       "type": "object",
@@ -524,13 +530,13 @@
           "401": {
             "$ref": "#/components/responses/401"
           },
-          "404": {
-            "$ref": "#/components/responses/404"
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
     },
-    "/water/water-entry/{id}": {
+    "/water/entry/{id}": {
       "patch": {
         "tags": [
           "Water"
@@ -559,18 +565,26 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "userId"
+                ],
                 "properties": {
-                  "time": {
+                  "userId": {
+                    "description": "User id",
                     "type": "string",
-                    "description": "Update time of water consumption (HH:mm format)",
-                    "example": "10:30"
+                    "example": "677ef8ffd965e35fbbcc5121"
+                  },
+                  "date": {
+                    "description": "Date and time of water intake",
+                    "type": "string",
+                    "example": "1970-01-01-06:30"
                   },
                   "amount": {
-                    "type": "string",
-                    "description": "Update amount of water consumed (in ml)",
+                    "description": "The volume of water in ml",
+                    "type": "number",
                     "minimum": 50,
                     "maximum": 5000,
-                    "example": 250
+                    "example": 350
                   }
                 }
               }
@@ -634,6 +648,25 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId"
+                ],
+                "properties": {
+                  "userId": {
+                    "description": "User id",
+                    "type": "string",
+                    "example": "677ef8ffd965e35fbbcc5121"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "204": {
             "description": "Successfully deleted a water entry"
@@ -691,7 +724,7 @@
         }
       }
     },
-    "/water/month/:month": {
+    "/water/month/{id}": {
       "get": {
         "tags": [
           "Water"
@@ -938,22 +971,42 @@
         "required": [
           "_id",
           "time",
-          "amount"
+          "amount",
+          "userId"
         ],
         "properties": {
           "_id": {
-            "type": "number",
-            "example": "65e4decdd286b30065d54af9"
+            "description": "Water entry id",
+            "type": "string",
+            "example": "65e4decdd286b37b65d54af9"
+          },
+          "userId": {
+            "description": "User id",
+            "type": "string",
+            "example": "65e4decdd286b36665d54af9"
           },
           "time": {
+            "description": "Time of water intake",
             "type": "string",
-            "format": "HH:mm",
-            "example": "06:30"
+            "format": "YYYY-MM-DD-HH:MM",
+            "example": "1970-01-01-06:30"
           },
           "amount": {
-            "type": "string",
+            "description": "Amount of water intake",
+            "type": "number",
             "minimum": 50,
-            "maximum": 5000
+            "maximum": 5000,
+            "example": 330
+          },
+          "createdAt": {
+            "description": "Data base generated timestamp of document creation",
+            "type": "string",
+            "example": "2025-02-05T15:00:34.055+00:00"
+          },
+          "updatedAt": {
+            "description": "Data base generated timestamp of document update",
+            "type": "string",
+            "example": "2025-02-05T15:00:34.055+00:00"
           }
         }
       },

@@ -37,10 +37,10 @@ paths:
   /user/avatar:
     patch:
       $ref: '../swagger/paths/user/userAvatarUpdate.yaml'
-  /water/water-entry:
+  /water/entry:
     post:
       $ref: '../swagger/paths/water/waterPost.yaml'
-  /water/water-entry/{id}:
+  /water/entry/{id}:
     patch:
       $ref: '../swagger/paths/water/{id}/waterByIdPatch.yaml'
     delete:
@@ -48,7 +48,7 @@ paths:
   /water/today:
     get:
       $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
-  /water/month/:month:
+  /water/month/{id}:
     get:
       $ref: '../swagger/paths/water/monthlyWaterDataGet.yaml'
   /water/daily-norma:
