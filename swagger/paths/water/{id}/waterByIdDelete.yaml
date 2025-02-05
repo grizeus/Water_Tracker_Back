@@ -12,12 +12,24 @@ parameters:
     schema:
       type: string
       example: "65ca67e7ae7f10c88b598384"
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - userId
+        properties:
+          userId:
+            description: 'User id'
+            type: string
+            example: '677ef8ffd965e35fbbcc5121'
 responses:
   "204":
     description: "Successfully deleted a water entry"
-  "404":
-    $ref: "../../../components/responses/404.yaml"
   "401":
     $ref: "../../../components/responses/401.yaml"
+  "404":
+    $ref: "../../../components/responses/404.yaml"
   '500':
     $ref: ../../../components/responses/500.yaml
