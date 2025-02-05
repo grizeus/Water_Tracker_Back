@@ -1,31 +1,30 @@
-import DayCollections from '../db/models/Day.js';
+import WaterCollections from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
 import mongoose from 'mongoose';
 
 //  Додавання запису про випиту воду
-export const addWaterEntry = async (userId, amount, time ) => {
+export const addWaterEntry = async (userId, amount, time) => {
+  const newEntry = {
+    _id: new mongoose.Types.ObjectId(),
+    userId: userId,
+    time: time,
+    amount: amount,
+  };
 
-    const newEntry = {
-      _id: new mongoose.Types.ObjectId(),
-      userId: userId,
-      time: time,
-      amount: amount,
-    };
+  // Додавання запису в масив entries
+  await WaterCollections.updateOne(
+    { userId },
+    { $push: { entries: newEntry } },
+    { upsert: true },
+  );
 
-    // Додавання запису в масив entries
-    await DayCollections.updateOne(
-      { userId },
-      { $push: { entries: newEntry } },
-      { upsert: true }
-    );
-
-    return newEntry;
+  return { message: 'Запис успішно додано', data: newEntry };
 };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
   // Оновлення конкретного запису в масиві entries
-  const result = await DayCollections.findOneAndUpdate(
+  const result = await WaterCollections.findOneAndUpdate(
     {
       userId: userId,
       'entries._id': id,
@@ -51,7 +50,7 @@ export const updateWaterEntry = async (id, payload, userId) => {
 };
 
 export const deleteWaterEntry = async (_id, userId) => {
-  const result = await DayCollections.updateOne(
+  const result = await WaterCollections.updateOne(
     { userId, 'entries._id': _id },
     { $pull: { entries: { _id } } },
     { new: true },
@@ -68,7 +67,7 @@ export const getDailyWaterData = async (userId) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const data = await DayCollections.findOne({
+  const data = await WaterCollections.findOne({
     userId: userId,
     date: { $gte: startOfDay, $lte: endOfDay },
   });
@@ -84,7 +83,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   const endOfMonth = new Date(`${normalizedMonth}-01`);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-  const days = await DayCollections.find({
+  const days = await WaterCollections.find({
     userId: userId,
     date: { $gte: startOfMonth, $lt: endOfMonth },
   });
@@ -115,17 +114,17 @@ export const getMonthlyWaterData = async (userId, month) => {
 };
 // Оновлення денної норми
 export const updateDailyWater = async (userId, dailyGoal) => {
-  let dailyRecord = await DayCollections.findOne({
+  let dailyRecord = await WaterCollections.findOne({
     userId,
   });
 
   if (!dailyRecord) {
-    dailyRecord = await DayCollections.create({
+    dailyRecord = await WaterCollections.create({
       userId,
       dailyGoal,
     });
   } else {
-    dailyRecord = await DayCollections.findOneAndUpdate(
+    dailyRecord = await WaterCollections.findOneAndUpdate(
       { userId },
       { dailyGoal },
       { new: true },
