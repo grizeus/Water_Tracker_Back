@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
 import {
   addWaterEntry,
@@ -11,7 +11,18 @@ import {
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
-export const addWaterEntryController = async (req, res) => {};
+export const addWaterEntryController = async (req, res) => {
+  try {
+    console.log('Request body:', req.body);
+    const { userId, amount, time } = req.body;
+
+    const result = await addWaterEntry(userId, amount, time);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error in addWater:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
