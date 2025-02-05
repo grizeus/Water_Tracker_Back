@@ -1,64 +1,29 @@
 import WaterCollections from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
-import mongoose from 'mongoose';
 
-//  Додавання запису про випиту воду
-export const addWaterEntry = async (userId, amount, time) => {
-  const newEntry = {
-    _id: new mongoose.Types.ObjectId(),
-    userId: userId,
-    time: time,
-    amount: amount,
-  };
+export const addWaterEntry = async (payload) => {
+  const newEntry = WaterCollections.create(payload);
 
-  // Додавання запису в масив entries
-  await WaterCollections.updateOne(
-    { userId },
-    { $push: { entries: newEntry } },
-    { upsert: true },
-  );
-
-  return { message: 'Запис успішно додано', data: newEntry };
+  return newEntry;
 };
 
-// Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
-  // Оновлення конкретного запису в масиві entries
   const result = await WaterCollections.findOneAndUpdate(
     {
-      userId: userId,
-      'entries._id': id,
+      userId,
+      _id: id,
     },
-    {
-      $set: {
-        'entries.$[elem].amount': payload.amount,
-        'entries.$[elem].time': payload.time,
-      },
-    },
-    {
-      new: true,
-      arrayFilters: [{ 'elem._id': id }],
-    },
-  );
-
-  if (!result) return null;
-
-  const updatedEntry = result.entries.find(
-    (entry) => entry._id.toString() === id,
-  );
-  return updatedEntry;
-};
-
-export const deleteWaterEntry = async (_id, userId) => {
-  const result = await WaterCollections.updateOne(
-    { userId, 'entries._id': _id },
-    { $pull: { entries: { _id } } },
+    payload,
     { new: true },
   );
 
-  if (result.modifiedCount === 0) {
-    throw new Error('Entry not found');
-  }
+  return result;
+};
+
+export const deleteWaterEntry = async (id, userId) => {
+  const result = await WaterCollections.findOneAndDelete({ userId, _id: id });
+
+  return result;
 };
 
 // Отримання денної статистики
