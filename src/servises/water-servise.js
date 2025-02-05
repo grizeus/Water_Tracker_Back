@@ -1,9 +1,27 @@
 import DayCollections from '../db/models/Day.js';
 import UserCollections from '../db/models/User.js';
+import mongoose from 'mongoose';
 
 //  Додавання запису про випиту воду
-export const addWaterEntry = async () => {};
+export const addWaterEntry = async (userId, amount, time ) => {
 
+    const newEntry = {
+      _id: new mongoose.Types.ObjectId(),
+      userId: userId,
+      time: time,
+      amount: amount,
+    };
+
+    // Додавання запису в масив entries
+    await DayCollections.updateOne(
+      { userId },
+      { $push: { entries: newEntry } },
+      { upsert: true }
+    );
+
+    return { message: 'Запис успішно додано', data: newEntry };
+
+};
 
 // Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
