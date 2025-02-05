@@ -19,8 +19,7 @@ export const addWaterEntry = async (userId, amount, time ) => {
       { upsert: true }
     );
 
-    return { message: 'Запис успішно додано', data: newEntry };
-
+    return newEntry;
 };
 
 // Оновлення запису про випиту воду

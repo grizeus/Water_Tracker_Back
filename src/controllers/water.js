@@ -12,16 +12,21 @@ import {
 
 // Додавання запису про випиту воду
 export const addWaterEntryController = async (req, res) => {
-  try {
     console.log('Request body:', req.body);
     const { userId, amount, time } = req.body;
 
     const result = await addWaterEntry(userId, amount, time);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Error in addWater:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
+
+    if (!result) {
+      throw createHttpError(404, "Water entry not found");
+    }
+    res.status(201).json({
+      data: result,
+      message: 'Water entry added successfully',
+    }
+
+    );
+
 };
 
 // Оновлення запису про випиту воду
