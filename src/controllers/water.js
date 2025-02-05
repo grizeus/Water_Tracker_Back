@@ -20,7 +20,7 @@ export const addWaterEntryController = async (req, res) => {
     if (!result) {
       throw createHttpError(404, "Water entry not found");
     }
-    res.status(200).json({
+    res.status(201).json({
       data: result,
       message: 'Water entry added successfully',
     }
