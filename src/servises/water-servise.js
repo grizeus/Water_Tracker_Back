@@ -32,75 +32,105 @@ export const getDailyWaterData = async (userId) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const data = await WaterCollections.findOne({
+  const waterEntries = await WaterCollections.find({
     userId: userId,
-    date: { $gte: startOfDay, $lte: endOfDay },
-  });
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+  }).sort({ createdAt: -1 });
 
-  return data ? { process: data.progress, entries: data.entries } : null;
-};
+  const totalConsumed = waterEntries.reduce(
+    (sum, entry) => sum + entry.amount,
+    0,
+  );
 
-// Отримання місячної статистики
-export const getMonthlyWaterData = async (userId, month) => {
-  const normalizedMonth = month.slice(0, 7);
-
-  const startOfMonth = new Date(`${normalizedMonth}-01`);
-  const endOfMonth = new Date(`${normalizedMonth}-01`);
-  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-
-  const days = await WaterCollections.find({
-    userId: userId,
-    date: { $gte: startOfMonth, $lt: endOfMonth },
-  });
-
-  if (!days || days.length === 0) {
-    return {
-      message: 'Nothing found.',
-      data: [],
-    };
+  const user = await UserCollections.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
   }
 
-  const formattedData = days.map((day) => {
-    const dateObj = new Date(day.date);
+  const dailyGoal = user.dailyGoal;
+  const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
+
+  return {
+    dailyGoal: dailyGoal,
+    progress: Math.min(progress, 100),
+    entries: waterEntries.map((entry) => ({
+      _id: entry._id,
+      time: entry.createdAt,
+      amount: entry.amount,
+    })),
+  };
+};
+
+export const getMonthlyWaterData = async (userId, month) => {
+  const normalizedMonth = month.slice(0, 7);
+  const startOfMonth = new Date(`${normalizedMonth}-01T00:00:00.000Z`);
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const waterEntries = await WaterCollections.find({
+    userId: userId,
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+  }).lean();
+
+  if (!waterEntries.length) {
+    return null;
+  }
+
+  const user = await UserCollections.findById(userId);
+  const todayGoal = user && user.dailyGoal;
+
+  // Групуємо дані по днях
+  const dailyData = waterEntries.reduce((acc, entry) => {
+    const dateObj = new Date(entry.createdAt);
     const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString(
       'en-US',
       { month: 'long' },
     )}`;
 
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = {
+        date: formattedDate,
+        totalAmount: 0,
+        entriesCount: 0,
+      };
+    }
+
+    acc[formattedDate].totalAmount += entry.amount;
+    acc[formattedDate].entriesCount += 1;
+
+    return acc;
+  }, {});
+
+  return Object.values(dailyData).map((day) => {
+    let percentage = (day.totalAmount / todayGoal) * 100;
+
+    if (percentage > 100) {
+      percentage = 100;
+    }
+
     return {
-      date: formattedDate,
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      percentage: day.progress.toFixed(0) + '%',
-      entriesCount: day.entries.length,
+      date: day.date,
+      dailyGoal: (todayGoal / 1000).toFixed(1) + ' L',
+      percentage: percentage.toFixed(0) + '%',
+      entriesCount: day.entriesCount,
     };
   });
-
-  return formattedData;
 };
-// Оновлення денної норми
-export const updateDailyWater = async (userId, dailyGoal) => {
-  let dailyRecord = await WaterCollections.findOne({
-    userId,
-  });
 
-  if (!dailyRecord) {
-    dailyRecord = await WaterCollections.create({
-      userId,
-      dailyGoal,
-    });
-  } else {
-    dailyRecord = await WaterCollections.findOneAndUpdate(
-      { userId },
-      { dailyGoal },
-      { new: true },
-    );
+export const updateDailyWater = async (userId, dailyGoal) => {
+  if (dailyGoal > 15000) {
+    throw new Error('Daily water goal cannot exceed 15000 ml.');
   }
 
-  const updatedUserDailyGoal = await UserCollections.findOneAndUpdate(
-    { _id: userId },
-    { dailyGoal: dailyGoal },
+  const updatedUser = await UserCollections.findByIdAndUpdate(
+    userId,
+    { dailyGoal },
     { new: true },
   );
 
-  return { dailyRecord, updatedUserDailyGoal };
+  if (!updatedUser) {
+    throw new Error('User not found.');
+  }
+
+  return { dailyGoal: updatedUser.dailyGoal };
 };

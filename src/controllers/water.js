@@ -56,52 +56,79 @@ export const deleteWaterEntryController = async (req, res) => {
 };
 
 // Отримання місячної статистики
-export const getMonthlyWaterDataController = async (req, res) => {
-  const userId = req.user._id;
-  const { month } = req.params;
+export const getMonthlyWaterDataController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { month } = req.params;
 
-  if (!month) {
-    return res.status(400).json({ message: 'Data invalid' });
+    const result = await getMonthlyWaterData(userId, month);
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No water consumption data found for this month',
+        data: [],
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      data: result,
+      message: 'Monthly water data retrieved successfully',
+    });
+  } catch (error) {
+    next(error);
   }
-  const normalizedMonth = month.slice(0, 7);
-  const monthlyData = await getMonthlyWaterData(userId, normalizedMonth);
-
-  res.status(200).json({
-    message: 'Success!The following data were found for this month.',
-    monthlyData,
-  });
 };
 
 // отримання денної норми
-export const getDailyWaterDataController = async (req, res) => {
-  const userId = req.user._id;
+export const getDailyWaterDataController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
 
-  const result = await getDailyWaterData(userId);
+    const result = await getDailyWaterData(userId);
 
-  if (!result) throw createHttpError(404, 'No daily water found');
+    if (!result) {
+      return res.status(404).json({
+        status: 404,
+        message: 'No entries found for today',
+        data: null,
+      });
+    }
 
-  res.status(200).json({
-    status: 200,
-    data: result,
-    message: 'Daily water goal retrieved successfully',
-  });
+    res.status(200).json({
+      status: 200,
+      data: result,
+      message: 'Daily water goal retrieved successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-// Оновлення денної норми
 export const updateDailyWaterController = async (req, res) => {
-  const userId = req.user._id;
-  const { dailyGoal } = req.body;
+  try {
+    const userId = req.user._id;
+    const { dailyGoal } = req.body;
 
-  const { dayRecord, updatedUserDailyGoal } = await updateDailyWater(
-    userId,
-    dailyGoal,
-  );
+    if (!dailyGoal) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Daily goal is required.',
+      });
+    }
 
-  if (!dayRecord && !updatedUserDailyGoal)
-    throw createHttpError(404, 'Users daily goal not found');
+    const result = await updateDailyWater(userId, dailyGoal);
 
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully updated daily goal!',
-  });
+    res.status(200).json({
+      status: 200,
+      message: 'Daily water goal updated successfully.',
+      data: result.dailyGoal,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: error.message,
+    });
+  }
 };
