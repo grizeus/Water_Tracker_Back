@@ -20,6 +20,12 @@ const setupSession = (res, session) => {
 export const registerController = async (req, res) => {
   const user = await registerUser(req.body);
 
+  if (!user) {
+    return res.status(400).json({
+      status: 400,
+      message: 'The request cannot be processed.',
+    });
+  }
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
@@ -31,7 +37,12 @@ export const loginController = async (req, res) => {
   const session = await loginUser(req.body);
 
   setupSession(res, session);
-
+  if (!session) {
+    return res.status(400).json({
+      status: 400,
+      message: 'The request cannot be processed.',
+    });
+  }
   res.status(200).json({
     status: 200,
     message: 'Successfully logged in a user!',
@@ -48,6 +59,12 @@ export const refreshTokenController = async (req, res) => {
   });
 
   setupSession(res, session);
+  if (!session) {
+    return res.status(400).json({
+      status: 400,
+      message: 'The request cannot be processed.',
+    });
+  }
 
   res.json({
     status: 200,

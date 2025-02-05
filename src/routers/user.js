@@ -14,7 +14,7 @@ const userRouter = Router();
 
 userRouter.use(authenticate);
 
-// Маршрут для отримання інформації про користувача за ID
+// Маршрут для отримання інформації про користувача
 userRouter.get('/', ctrlWrapper(userControllers.getUserController));
 
 // Маршрут для оновлення інформації про користувача
@@ -27,8 +27,8 @@ userRouter.patch(
 // Маршрут для оновлення аватара
 userRouter.patch(
   '/avatar',
-  upload.single('photo'),
-  ctrlWrapper(userControllers.updateAvatarController),
+  upload.single('avatarURL'),
+  userControllers.updateAvatarController,
 );
 
 export default userRouter;

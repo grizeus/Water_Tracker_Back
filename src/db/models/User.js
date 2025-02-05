@@ -29,10 +29,9 @@ const authSchema = new Schema(
       minLength: 3,
       maxLength: 24,
       default: function () {
-        return this.email; // Використовуємо email як значення за замовчуванням
+        return this.email;
       },
     },
-    // URL аватара користувача, за замовчуванням Cloudinary посилання
     avatarURL: {
       type: String,
       default:
