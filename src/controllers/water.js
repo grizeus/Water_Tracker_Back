@@ -12,35 +12,27 @@ import {
 
 // Додавання запису про випиту воду
 export const addWaterEntryController = async (req, res) => {
-    console.log('Request body:', req.body);
-    const { userId, amount, time } = req.body;
+  const userId = req.user._id;
 
-    const result = await addWaterEntry(userId, amount, time);
+  const result = await addWaterEntry({ userId, ...req.body });
 
-    if (!result) {
-      throw createHttpError(404, "Water entry not found");
-    }
-    res.status(201).json({
-      data: result,
-      message: 'Water entry added successfully',
-    }
-
-    );
-
+  res.status(201).json({
+    data: result,
+    message: 'Water entry added successfully',
+  });
 };
 
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
   const userId = req.user._id;
-
-  const { id: id } = req.params;
+  const { id } = req.params;
 
   const { time, amount } = req.body;
 
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
   if (!result) {
-    throw createHttpError(404, "Water entry not found");
+    throw createHttpError(404, 'Water entry not found');
   }
 
   res.status(200).json({
@@ -51,15 +43,13 @@ export const updateWaterEntryController = async (req, res) => {
 
 // Видалення запису про випиту воду
 export const deleteWaterEntryController = async (req, res) => {
-  const { id: _id } = req.params;
+  const { id } = req.params;
   const userId = req.user._id;
 
-  try {
-    await deleteWaterEntry(_id, userId);
-  } catch (e) {
-    if (e instanceof Error) {
-      throw createHttpError(404, 'Entry not found');
-    }
+  const result = await deleteWaterEntry(id, userId);
+
+  if (!result) {
+    throw createHttpError(404, 'Water entry not found');
   }
 
   res.status(204).send();
