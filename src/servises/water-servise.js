@@ -67,12 +67,33 @@ export const getDailyWaterData = async (userId) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const data = await WaterCollections.findOne({
+  // Отримуємо всі записи води за сьогодні
+  const waterEntries = await WaterCollections.find({
     userId: userId,
-    date: { $gte: startOfDay, $lte: endOfDay },
-  });
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+  }).sort({ createdAt: -1 });
 
-  return data ? { process: data.progress, entries: data.entries } : null;
+  // Підраховуємо загальну кількість випитої води
+  const totalConsumed = waterEntries.reduce(
+    (sum, entry) => sum + entry.amount,
+    0,
+  );
+
+  // Отримуємо денну норму користувача
+  const user = await UserCollections.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const dailyGoal = user.dailyGoal;
+  const progress = ((totalConsumed / dailyGoal) * 100).toFixed(2); // Розрахунок у %
+
+  return {
+    progress: Math.min(progress, 100), // Не більше 100%
+    totalConsumed,
+    dailyGoal,
+    entries: waterEntries,
+  };
 };
 
 // Отримання місячної статистики
