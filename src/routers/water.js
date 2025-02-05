@@ -14,21 +14,21 @@ const waterRouter = Router();
 waterRouter.use(authenticate);
 // Додавання запису по спожитій воді
 waterRouter.post(
-  '/water-entry',
+  '/entry',
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.addWaterEntryController),
 );
 
 // Редагування запису по спожитій воді
 waterRouter.patch(
-  '/water-entry/:id',
+  '/entry/:id',
   // T9-updateWaterEntr
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
 
 waterRouter.delete(
-  '/water-entry/:id',
+  '/entry/:id',
   ctrlWrapper(waterControllers.deleteWaterEntryController),
 );
 
@@ -38,7 +38,7 @@ waterRouter.get(
 );
 
 waterRouter.get(
-  '/month/:month',
+  '/month/:id',
   ctrlWrapper(waterControllers.getMonthlyWaterDataController),
 );
 

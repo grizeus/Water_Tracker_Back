@@ -12,14 +12,10 @@ import {
 
 // Додавання запису про випиту воду
 export const addWaterEntryController = async (req, res) => {
-  console.log('Request body:', req.body);
-  const { userId, amount, time } = req.body;
+  const userId = req.user._id;
 
-  const result = await addWaterEntry(userId, amount, time);
+  const result = await addWaterEntry({ userId, ...req.body });
 
-  if (!result) {
-    throw createHttpError(404, 'Water entry not found');
-  }
   res.status(201).json({
     data: result,
     message: 'Water entry added successfully',
@@ -29,8 +25,7 @@ export const addWaterEntryController = async (req, res) => {
 // Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
   const userId = req.user._id;
-
-  const { id: id } = req.params;
+  const { id } = req.params;
 
   const { time, amount } = req.body;
 
@@ -48,15 +43,13 @@ export const updateWaterEntryController = async (req, res) => {
 
 // Видалення запису про випиту воду
 export const deleteWaterEntryController = async (req, res) => {
-  const { id: _id } = req.params;
+  const { id } = req.params;
   const userId = req.user._id;
 
-  try {
-    await deleteWaterEntry(_id, userId);
-  } catch (e) {
-    if (e instanceof Error) {
-      throw createHttpError(404, 'Entry not found');
-    }
+  const result = await deleteWaterEntry(id, userId);
+
+  if (!result) {
+    throw createHttpError(404, 'Water entry not found');
   }
 
   res.status(204).send();
@@ -113,7 +106,6 @@ export const getDailyWaterDataController = async (req, res, next) => {
   }
 };
 
-// Оновлюємо або створюємо запис у WaterCollections
 export const updateDailyWaterController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -131,7 +123,7 @@ export const updateDailyWaterController = async (req, res) => {
     res.status(200).json({
       status: 200,
       message: 'Daily water goal updated successfully.',
-      data: result,
+      data: result.dailyGoal,
     });
   } catch (error) {
     res.status(400).json({

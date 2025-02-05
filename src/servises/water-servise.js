@@ -1,64 +1,29 @@
 import WaterCollections from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
-import mongoose from 'mongoose';
 
-//  Додавання запису про випиту воду
-export const addWaterEntry = async (userId, amount, time) => {
-  const newEntry = {
-    _id: new mongoose.Types.ObjectId(),
-    userId: userId,
-    time: time,
-    amount: amount,
-  };
+export const addWaterEntry = async (payload) => {
+  const newEntry = WaterCollections.create(payload);
 
-  // Додавання запису в масив entries
-  await WaterCollections.updateOne(
-    { userId },
-    { $push: { entries: newEntry } },
-    { upsert: true },
-  );
-
-  return { message: 'Запис успішно додано', data: newEntry };
+  return newEntry;
 };
 
-// Оновлення запису про випиту воду
 export const updateWaterEntry = async (id, payload, userId) => {
-  // Оновлення конкретного запису в масиві entries
   const result = await WaterCollections.findOneAndUpdate(
     {
-      userId: userId,
-      'entries._id': id,
+      userId,
+      _id: id,
     },
-    {
-      $set: {
-        'entries.$[elem].amount': payload.amount,
-        'entries.$[elem].time': payload.time,
-      },
-    },
-    {
-      new: true,
-      arrayFilters: [{ 'elem._id': id }],
-    },
-  );
-
-  if (!result) return null;
-
-  const updatedEntry = result.entries.find(
-    (entry) => entry._id.toString() === id,
-  );
-  return updatedEntry;
-};
-
-export const deleteWaterEntry = async (_id, userId) => {
-  const result = await WaterCollections.updateOne(
-    { userId, 'entries._id': _id },
-    { $pull: { entries: { _id } } },
+    payload,
     { new: true },
   );
 
-  if (result.modifiedCount === 0) {
-    throw new Error('Entry not found');
-  }
+  return result;
+};
+
+export const deleteWaterEntry = async (id, userId) => {
+  const result = await WaterCollections.findOneAndDelete({ userId, _id: id });
+
+  return result;
 };
 
 // Отримання денної статистики
@@ -67,51 +32,52 @@ export const getDailyWaterData = async (userId) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  // Отримуємо всі записи води за сьогодні
   const waterEntries = await WaterCollections.find({
     userId: userId,
     createdAt: { $gte: startOfDay, $lte: endOfDay },
   }).sort({ createdAt: -1 });
 
-  // Підраховуємо загальну кількість випитої води
   const totalConsumed = waterEntries.reduce(
     (sum, entry) => sum + entry.amount,
     0,
   );
 
-  // Отримуємо денну норму користувача
   const user = await UserCollections.findById(userId);
   if (!user) {
     throw new Error('User not found');
   }
 
   const dailyGoal = user.dailyGoal;
-  const progress = ((totalConsumed / dailyGoal) * 100).toFixed(2); // Розрахунок у %
+  const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
 
   return {
-    progress: Math.min(progress, 100), // Не більше 100%
-    totalConsumed,
-    dailyGoal,
-    entries: waterEntries,
+    dailyGoal: dailyGoal,
+    progress: Math.min(progress, 100),
+    entries: waterEntries.map((entry) => ({
+      _id: entry._id,
+      time: entry.createdAt,
+      amount: entry.amount,
+    })),
   };
 };
 
-// Отримання місячної статистики
 export const getMonthlyWaterData = async (userId, month) => {
   const normalizedMonth = month.slice(0, 7);
   const startOfMonth = new Date(`${normalizedMonth}-01T00:00:00.000Z`);
   const endOfMonth = new Date(startOfMonth);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-  // Отримуємо всі записи води за місяць
   const waterEntries = await WaterCollections.find({
     userId: userId,
     createdAt: { $gte: startOfMonth, $lt: endOfMonth },
   }).lean();
 
   if (!waterEntries.length) {
-    return [];
+    return null;
   }
+
+  const user = await UserCollections.findById(userId);
+  const todayGoal = user && user.dailyGoal;
 
   // Групуємо дані по днях
   const dailyData = waterEntries.reduce((acc, entry) => {
@@ -135,23 +101,27 @@ export const getMonthlyWaterData = async (userId, month) => {
     return acc;
   }, {});
 
-  // Форматуємо вихідні дані
-  return Object.values(dailyData).map((day) => ({
-    date: day.date,
-    dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-    percentage: ((day.totalAmount / day.dailyGoal) * 100).toFixed(0) + '%',
-    entriesCount: day.entriesCount,
-  }));
+  return Object.values(dailyData).map((day) => {
+    let percentage = (day.totalAmount / todayGoal) * 100;
+
+    if (percentage > 100) {
+      percentage = 100;
+    }
+
+    return {
+      date: day.date,
+      dailyGoal: (todayGoal / 1000).toFixed(1) + ' L',
+      percentage: percentage.toFixed(0) + '%',
+      entriesCount: day.entriesCount,
+    };
+  });
 };
 
-// Оновлення денної норми
 export const updateDailyWater = async (userId, dailyGoal) => {
-  // Обмеження на максимальне значення
   if (dailyGoal > 15000) {
     throw new Error('Daily water goal cannot exceed 15000 ml.');
   }
 
-  // Оновлюємо денну норму в UserCollections
   const updatedUser = await UserCollections.findByIdAndUpdate(
     userId,
     { dailyGoal },
@@ -162,15 +132,5 @@ export const updateDailyWater = async (userId, dailyGoal) => {
     throw new Error('User not found.');
   }
 
-  // Оновлюємо або створюємо запис у WaterCollections
-  let dailyRecord = await WaterCollections.findOne({ userId });
-
-  if (!dailyRecord) {
-    dailyRecord = await WaterCollections.create({ userId, dailyGoal });
-  } else {
-    dailyRecord.dailyGoal = dailyGoal;
-    await dailyRecord.save();
-  }
-
-  return { updatedUser, dailyRecord };
+  return { dailyGoal: updatedUser.dailyGoal };
 };
