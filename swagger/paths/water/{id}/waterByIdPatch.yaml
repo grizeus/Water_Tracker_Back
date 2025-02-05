@@ -17,17 +17,23 @@ requestBody:
     application/json:
       schema:
         type: object
+        required:
+          - userId
         properties:
-          time:
+          userId:
+            description: 'User id'
             type: string
-            description: Update time of water consumption (HH:mm format)
-            example: '10:30'
+            example: '677ef8ffd965e35fbbcc5121'
+          date:
+            description: 'Date and time of water intake'
+            type: string
+            example: '1970-01-01-06:30'
           amount:
-            type: string
-            description: Update amount of water consumed (in ml)
+            description: 'The volume of water in ml'
+            type: number
             minimum: 50
             maximum: 5000
-            example: 250
+            example: 350
 responses:
   '200':
     description: Water entry updated successfully
