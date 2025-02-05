@@ -3,8 +3,7 @@ tags:
 summary: Sign up a new user
 operationId: signupUser
 description: 'Sign up a user with email and password'
-security:
-  - bearerAuth: []
+security: []
 requestBody:
   content:
     application/json:

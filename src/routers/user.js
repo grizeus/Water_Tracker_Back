@@ -14,21 +14,21 @@ const userRouter = Router();
 
 userRouter.use(authenticate);
 
-// Маршрут для отримання інформації про користувача за ID
-userRouter.get('/:id', ctrlWrapper(userControllers.getUserController));
+// Маршрут для отримання інформації про користувача
+userRouter.get('/', ctrlWrapper(userControllers.getUserController));
 
 // Маршрут для оновлення інформації про користувача
 userRouter.patch(
-  '/:id',
+  '/',
   validateBody(userInfoSchema),
   ctrlWrapper(userControllers.updateUserController),
 );
 
 // Маршрут для оновлення аватара
 userRouter.patch(
-  '/:id/avatar',
-  upload.single('photo'),
-  ctrlWrapper(userControllers.updateAvatarController),
+  '/avatar',
+  upload.single('avatarURL'),
+  userControllers.updateAvatarController,
 );
 
 export default userRouter;

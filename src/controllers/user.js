@@ -1,67 +1,93 @@
 import createHttpError from 'http-errors';
 import {
   getUserById,
-  updateAvatarById,
-  updateUserById,
+  updateAvatar,
+  updateUser,
 } from '../servises/user-servise.js';
 
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getUserController = async (req, res, next) => {
-  const userId = req.params.id;
-        const user = await getUserById(userId);
+  const userId = req.user._id;
+  const user = await getUserById(userId);
+  console.log('hello');
 
-        if (!user) {
-            return res.status(404).json({
-                status: 404,
-                message: "User not found!",
-            });
-        }
+  if (!user) {
+    return res.status(400).json({
+      status: 400,
+      message: 'The request cannot be processed.',
+    });
+  }
 
-        res.json({
-            status: 200,
-            message: "Successfully found user!",
-            data: user,
-        });
+  res.json({
+    status: 200,
+    message: 'Successfully found user!',
+    data: {
+      email: user.email,
+      gender: user.gender,
+      name: user.name,
+      avatarURL: user.avatarURL,
+      dailyGoal: user.dailyGoal,
+    },
+  });
 };
 
-
 export const updateUserController = async (req, res, next) => {
-  const { id: userId } = req.params;
+  const userId = req.user._id;
   const userDataToUpdate = req.body;
-  // TODO: get info about userID session
-  // const { id: userId } = req.user;
-  const newUserData = await updateUserById(userId, userDataToUpdate);
+  const newUserData = await updateUser(userId, userDataToUpdate);
 
-  if (!newUserData) throw new createHttpError(404, 'User not found');
+  if (!newUserData) {
+    return res.status(400).json({
+      status: 400,
+      message: 'The request cannot be processed.',
+    });
+  }
 
   res.status(200).json({
     status: 200,
     message: 'Successfully updated user',
-    data: newUserData,
+    data: {
+      email: newUserData.email,
+      gender: newUserData.gender,
+      name: newUserData.name,
+      avatarURL: newUserData.avatarURL,
+      dailyGoal: newUserData.dailyGoal,
+    },
   });
 };
 
 export const updateAvatarController = async (req, res, next) => {
-  try {
-    const { id: userId } = req.params;
-    const { avatarURL } = req.body;
-
-    if (!avatarURL) {
-      throw new createHttpError(400, 'Avatar URL is required');
+  const userId = req.user._id;
+  let avatarURL;
+  if (req.file) {
+    try {
+      avatarURL = await saveFileToCloudinary(req.file);
+    } catch {
+      return next(
+        createHttpError(
+          503,
+          'There was an error connecting to an external service. Please try again later.',
+        ),
+      );
     }
-
-    const updatedUser = await updateAvatarById(userId, avatarURL);
-
-    if (!updatedUser) {
-      throw new createHttpError(404, 'User not found');
-    }
-
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully updated avatar',
-      data: updatedUser,
-    });
-  } catch (error) {
-    next(error);
   }
+
+  if (!req.file) {
+    return next(createHttpError(400, 'Avatar URL is required'));
+  }
+
+  const updatedAvatar = await updateAvatar(userId, avatarURL);
+
+  if (!updatedAvatar) {
+    return res.status(400).json({
+      message: 'The request cannot be processed.',
+    });
+  }
+
+  return res.status(200).json({
+    status: 200,
+    message: 'Successfully updated avatar',
+    avatarURL: updatedAvatar.avatarURL,
+  });
 };

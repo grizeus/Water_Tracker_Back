@@ -1,7 +1,4 @@
 type: object
-required:
-  - email
-  - password
 properties:
   name:
     description: "User's name"
@@ -12,10 +9,10 @@ properties:
     description: 'Users email'
     type: string
     example: 'example@example.com'
-  password:
-    description: "User's password"
-    type: string
-    example: '********'
+  dailyGoal:
+    description: "User's dailyGoal"
+    type: number
+    example: '220'
   gender:
     description: "User's gender"
     type: string
@@ -25,6 +22,3 @@ properties:
     type: string
     format: binary
     example: https://res.cloudinary.com/photo/image.png
-  token:
-    description: "User's token"
-    type: string

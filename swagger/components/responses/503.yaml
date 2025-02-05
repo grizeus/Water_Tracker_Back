@@ -1,4 +1,4 @@
-description: 'Failed to delete photo due to an error on Cloudinary'
+description: 'Problem with external server Cloudinary: Some error occurred.'
 content:
   application/json:
     schema:
@@ -9,7 +9,7 @@ content:
       properties:
         status:
           type: integer
-          example: 422
+          example: 500
         message:
           type: string
-          example: 'Failed to delete photo from Cloudinary: Some error occurred.'
+          example: 'Problem with external server Cloudinary: Some error occurred.'
