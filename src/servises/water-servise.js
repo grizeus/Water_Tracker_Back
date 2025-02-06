@@ -2,7 +2,11 @@ import WaterCollection from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
 
 export const addWaterEntry = async (payload) => {
-  const newEntry = WaterCollection.create(payload);
+  const { userId } = payload;
+  const user = await UserCollections.findById(userId);
+  const dailyGoal = user.dailyGoal;
+  
+  const newEntry = WaterCollection.create({ dailyGoal, ...payload });
 
   return newEntry;
 };
@@ -117,7 +121,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   });
 };
 
-export const updateDailyWater = async (userId, dailyGoal) => {
+export const updateDailyGoal = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
     throw new Error('Daily water goal cannot exceed 15000 ml.');
   }
@@ -130,6 +134,18 @@ export const updateDailyWater = async (userId, dailyGoal) => {
 
   if (!updatedUser) {
     throw new Error('User not found.');
+  }
+
+  const currentDay = new Date(Date.now()).toISOString().split('T')[0];
+
+  // update of taday's records
+  const updatedEntries = await WaterCollection.updateMany(
+    { userId, time: { $regex: `^${currentDay}` } },
+    { $set: dailyGoal },
+  );
+
+  if (updatedEntries.matchedCount !== updatedEntries.modifiedCount) {
+    throw new Error('Not every entry was updated');
   }
 
   return { dailyGoal: updatedUser.dailyGoal };
