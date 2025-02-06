@@ -5,8 +5,8 @@ export const addWaterEntry = async (payload) => {
   const { userId } = payload;
   const user = await UserCollections.findById(userId);
   const dailyGoal = user.dailyGoal;
-  
-  const newEntry = WaterCollection.create({ dailyGoal, ...payload });
+
+  const newEntry = await WaterCollection.create({ dailyGoal, ...payload });
 
   return newEntry;
 };
@@ -121,7 +121,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   });
 };
 
-export const updateDailyGoal = async (userId, dailyGoal) => {
+export const updateDailyWater = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
     throw new Error('Daily water goal cannot exceed 15000 ml.');
   }
@@ -138,7 +138,7 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
 
   const currentDay = new Date(Date.now()).toISOString().split('T')[0];
 
-  // update of taday's records
+  // update of today's records
   const updatedEntries = await WaterCollection.updateMany(
     { userId, time: { $regex: `^${currentDay}` } },
     { $set: dailyGoal },
