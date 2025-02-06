@@ -6,9 +6,6 @@ const waterSchema = new Schema(
     time: {
       type: String,
       required: true,
-      // default: function () {
-      //   return new Date().toISOString();
-      // },
     },
     amount: {
       type: Number,
@@ -20,6 +17,13 @@ const waterSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    dailyGoal: {
+      type: Number,
+      required: true,
+      min: 50,
+      max: 15000,
+      default: 2000,
     },
   },
   {
