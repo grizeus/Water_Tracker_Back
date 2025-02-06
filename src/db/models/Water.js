@@ -6,9 +6,6 @@ const waterSchema = new Schema(
     time: {
       type: String,
       required: true,
-      // default: function () {
-      //   return new Date().toISOString();
-      // },
     },
     amount: {
       type: Number,
@@ -21,6 +18,13 @@ const waterSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    dailyGoal: {
+      type: Number,
+      required: true,
+      min: 50,
+      max: 15000,
+      default: 2000,
+    },
   },
   {
     timestamps: true,
@@ -28,10 +32,9 @@ const waterSchema = new Schema(
   },
 );
 
-// Хук для обробки помилок
 waterSchema.post('save', handleSaveError);
 waterSchema.pre('findOneAndUpdate', setUpdateSettings);
 waterSchema.post('findOneAndUpdate', handleSaveError);
 
-const WaterCollections = model('water', waterSchema);
-export default WaterCollections;
+const WaterCollection = model('water', waterSchema);
+export default WaterCollection;

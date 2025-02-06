@@ -7,7 +7,7 @@ import {
   deleteWaterEntry,
   getDailyWaterData,
   getMonthlyWaterData,
-  updateDailyWater,
+  updateDailyGoal,
 } from '../servises/water-servise.js';
 
 // Додавання запису про випиту воду
@@ -118,7 +118,7 @@ export const updateDailyWaterController = async (req, res) => {
       });
     }
 
-    const result = await updateDailyWater(userId, dailyGoal);
+    const result = await updateDailyGoal(userId, dailyGoal);
 
     res.status(200).json({
       status: 200,
