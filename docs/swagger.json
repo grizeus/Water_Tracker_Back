@@ -724,17 +724,29 @@
         }
       }
     },
-    "/water/month/{id}": {
+    "/water/month/{date}": {
       "get": {
         "tags": [
           "Water"
         ],
-        "summary": "water",
-        "operationId": "Water",
-        "description": "entry about water intake with payload'",
+        "summary": "Get user's monthly water data",
+        "operationId": "getMonthlyWaterData",
+        "description": "Return user's monthly water data",
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2025-01"
+            },
+            "description": "The date in format YYYY-MM"
           }
         ],
         "requestBody": {
@@ -743,21 +755,13 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "amount"
+                  "userId"
                 ],
                 "properties": {
-                  "date": {
-                    "description": "Date and time of water intake",
+                  "userId": {
+                    "description": "User id",
                     "type": "string",
-                    "example": "10:20"
-                  },
-                  "volume": {
-                    "description": "The volume of water in ml",
-                    "type": "number",
-                    "minimum": 50,
-                    "maximum": 5000,
-                    "example": 350
+                    "example": "677ef8ffd965e35fbbcc5121"
                   }
                 }
               }
@@ -765,24 +769,37 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Successfully created an entry of water",
+          "200": {
+            "description": "Get water consumption by month",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
+                    "status",
                     "message",
                     "data"
                   ],
                   "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
                     "message": {
                       "type": "string",
-                      "example": "Successfully created an entry!"
+                      "example": "Monthly water data retrieved successfully"
                     },
                     "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/water"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "example": {
+                          "date": "2025-01",
+                          "dailyGoal": "1.5 L",
+                          "percentage": "70%",
+                          "entriesCount": "7,"
+                        }
+                      }
                     }
                   }
                 }
@@ -796,7 +813,36 @@
             "$ref": "#/components/responses/401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "description": "Not Found error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No water consumption data found for this month"
+                    },
+                    "data": {
+                      "type": "array",
+                      "example": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
