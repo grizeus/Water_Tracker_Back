@@ -1,14 +1,14 @@
-import WaterCollections from '../db/models/Water.js';
+import WaterCollection from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
 
 export const addWaterEntry = async (payload) => {
-  const newEntry = WaterCollections.create(payload);
+  const newEntry = WaterCollection.create(payload);
 
   return newEntry;
 };
 
 export const updateWaterEntry = async (id, payload, userId) => {
-  const result = await WaterCollections.findOneAndUpdate(
+  const result = await WaterCollection.findOneAndUpdate(
     {
       userId,
       _id: id,
@@ -21,7 +21,7 @@ export const updateWaterEntry = async (id, payload, userId) => {
 };
 
 export const deleteWaterEntry = async (id, userId) => {
-  const result = await WaterCollections.findOneAndDelete({ userId, _id: id });
+  const result = await WaterCollection.findOneAndDelete({ userId, _id: id });
 
   return result;
 };
@@ -32,7 +32,7 @@ export const getDailyWaterData = async (userId) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-  const waterEntries = await WaterCollections.find({
+  const waterEntries = await WaterCollection.find({
     userId: userId,
     createdAt: { $gte: startOfDay, $lte: endOfDay },
   }).sort({ createdAt: -1 });
@@ -67,7 +67,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   const endOfMonth = new Date(startOfMonth);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
-  const waterEntries = await WaterCollections.find({
+  const waterEntries = await WaterCollection.find({
     userId: userId,
     createdAt: { $gte: startOfMonth, $lt: endOfMonth },
   }).lean();

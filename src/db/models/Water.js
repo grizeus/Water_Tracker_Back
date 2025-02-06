@@ -32,10 +32,9 @@ const waterSchema = new Schema(
   },
 );
 
-// Хук для обробки помилок
 waterSchema.post('save', handleSaveError);
 waterSchema.pre('findOneAndUpdate', setUpdateSettings);
 waterSchema.post('findOneAndUpdate', handleSaveError);
 
-const WaterCollections = model('water', waterSchema);
-export default WaterCollections;
+const WaterCollection = model('water', waterSchema);
+export default WaterCollection;
