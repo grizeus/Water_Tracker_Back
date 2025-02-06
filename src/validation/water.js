@@ -10,7 +10,7 @@ export const waterEntrySchema = Joi.object({
   }),
   time: Joi.string().regex(waterRegexp).messages({
     'string.base': 'Time must be a string.',
-    'string.pattern.base': 'Time format is invalid.',
+    'string.pattern.base': 'Time format is invalid. Must be YYYY-MM-DD-HH:MM',
   }),
 });
 
