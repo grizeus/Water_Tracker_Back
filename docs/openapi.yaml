@@ -48,9 +48,9 @@ paths:
   /water/today:
     get:
       $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
-  /water/month/{id}:
+  /water/month/{date}:
     get:
-      $ref: '../swagger/paths/water/monthlyWaterDataGet.yaml'
+      $ref: '../swagger/paths/water/month/monthlyWaterDataGet.yaml'
   /water/daily-norma:
     patch:
       $ref: '../swagger/paths/water/dailyWaterPatch.yaml'

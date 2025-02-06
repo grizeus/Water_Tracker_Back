@@ -12,17 +12,15 @@ import { waterEntrySchema, dailyGoalSchema } from '../validation/water.js';
 const waterRouter = Router();
 
 waterRouter.use(authenticate);
-// Додавання запису по спожитій воді
+
 waterRouter.post(
   '/entry',
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.addWaterEntryController),
 );
 
-// Редагування запису по спожитій воді
 waterRouter.patch(
   '/entry/:id',
-  // T9-updateWaterEntr
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
@@ -38,11 +36,10 @@ waterRouter.get(
 );
 
 waterRouter.get(
-  '/month/:id',
+  '/month/:date',
   ctrlWrapper(waterControllers.getMonthlyWaterDataController),
 );
 
-// Оновлення денної норми споживання води
 waterRouter.patch(
   '/daily-norma',
   validateBody(dailyGoalSchema),
