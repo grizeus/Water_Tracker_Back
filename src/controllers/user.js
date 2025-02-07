@@ -3,7 +3,7 @@ import {
   getUserById,
   updateAvatar,
   updateUser,
-} from '../servises/user-servise.js';
+} from '../services/user-servise.js';
 
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 

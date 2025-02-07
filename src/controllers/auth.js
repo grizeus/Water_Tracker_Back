@@ -3,7 +3,7 @@ import {
   loginUser,
   refresh,
   logout,
-} from '../servises/auth-servise.js';
+} from '../services/auth-servise.js';
 
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {

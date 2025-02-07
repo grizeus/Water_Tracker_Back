@@ -6,6 +6,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
+import { isValidId } from '../middlewares/isValidId.js';
 
 import { waterEntrySchema, dailyGoalSchema } from '../validation/water.js';
 
@@ -21,12 +22,14 @@ waterRouter.post(
 
 waterRouter.patch(
   '/entry/:id',
+  isValidId,
   validateBody(waterEntrySchema),
   ctrlWrapper(waterControllers.updateWaterEntryController),
 );
 
 waterRouter.delete(
   '/entry/:id',
+  isValidId,
   ctrlWrapper(waterControllers.deleteWaterEntryController),
 );
 

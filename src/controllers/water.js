@@ -7,11 +7,10 @@ import {
   getDailyWaterData,
   getMonthlyWaterData,
   updateDailyWater,
-} from '../servises/water-servise.js';
+} from '../services/water-servise.js';
 
 export const addWaterEntryController = async (req, res) => {
   const userId = req.user._id;
-
   const result = await addWaterEntry({ userId, ...req.body });
 
   res.status(201).json({
