@@ -55,7 +55,7 @@ export const getDailyWaterData = async (userId) => {
     progress: Math.min(progress, 100),
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
-      time: entry.createdAt,
+      time: entry.updatedAt.toISOString().slice(0, 16),
       amount: entry.amount,
     })),
   };

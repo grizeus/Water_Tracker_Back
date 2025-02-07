@@ -11,9 +11,6 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
-    },
-    {
       "url": "https://watertrackerbackend-5ymk.onrender.com"
     }
   ],
@@ -42,6 +39,7 @@
         "description": "Sign up a user with email and password",
         "security": [],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -146,7 +144,7 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "401": {
+          "404": {
             "$ref": "#/components/responses/401"
           },
           "500": {
@@ -199,33 +197,15 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully refreshed a session",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully refreshed a session!"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Successfully refreshed a session"
           },
           "400": {
             "$ref": "#/components/responses/400"
           },
           "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
             "$ref": "#/components/responses/401"
           },
           "500": {
@@ -316,6 +296,16 @@
                     "type": "string",
                     "example": "John Doe"
                   },
+                  "email": {
+                    "description": "User's email",
+                    "type": "string",
+                    "example": "example@example.com"
+                  },
+                  "dailyGoal": {
+                    "description": "User's daily goal",
+                    "type": "number",
+                    "example": 220
+                  },
                   "gender": {
                     "description": "User's gender",
                     "type": "string",
@@ -323,6 +313,22 @@
                       "woman",
                       "man"
                     ]
+                  },
+                  "avatarURL": {
+                    "description": "Link to user's avatar",
+                    "type": "string",
+                    "format": "binary",
+                    "example": "https://res.cloudinary.com/photo/image.png"
+                  },
+                  "oldPassword": {
+                    "description": "Old user's password",
+                    "type": "string",
+                    "example": "********"
+                  },
+                  "newPassword": {
+                    "description": "New user's password",
+                    "type": "string",
+                    "example": "********"
                   }
                 }
               }
@@ -424,7 +430,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "User updated"
+                      "example": "User avatar updated"
                     },
                     "data": {
                       "type": "object",
@@ -460,41 +466,18 @@
         ],
         "summary": "Add an entry about water",
         "operationId": "addWater",
-        "description": "Add an entry about water intake with payload",
+        "description": "Add an entry about water intake with payload.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "date",
-                  "amount",
-                  "userId"
-                ],
-                "properties": {
-                  "userId": {
-                    "description": "User id",
-                    "type": "string",
-                    "example": "677ef8ffd965e35fbbcc5121"
-                  },
-                  "date": {
-                    "description": "Date and time of water intake",
-                    "type": "string",
-                    "example": "1970-01-01-06:30"
-                  },
-                  "amount": {
-                    "description": "The volume of water in ml",
-                    "type": "number",
-                    "minimum": 50,
-                    "maximum": 5000,
-                    "example": 350
-                  }
-                }
+                "$ref": "#/components/schemas/post.Entry"
               }
             }
           }
@@ -517,7 +500,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/water"
+                      "$ref": "#/components/schemas/post.Entry"
                     }
                   }
                 }
@@ -564,29 +547,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "userId"
-                ],
-                "properties": {
-                  "userId": {
-                    "description": "User id",
-                    "type": "string",
-                    "example": "677ef8ffd965e35fbbcc5121"
-                  },
-                  "date": {
-                    "description": "Date and time of water intake",
-                    "type": "string",
-                    "example": "1970-01-01-06:30"
-                  },
-                  "amount": {
-                    "description": "The volume of water in ml",
-                    "type": "number",
-                    "minimum": 50,
-                    "maximum": 5000,
-                    "example": 350
-                  }
-                }
+                "$ref": "#/components/schemas/patchDeleteEntry"
               }
             }
           }
@@ -600,7 +561,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/water"
+                      "$ref": "#/components/schemas/patchDeleteEntry"
                     },
                     "message": {
                       "type": "string",
@@ -648,25 +609,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "userId"
-                ],
-                "properties": {
-                  "userId": {
-                    "description": "User id",
-                    "type": "string",
-                    "example": "677ef8ffd965e35fbbcc5121"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "204": {
             "description": "Successfully deleted a water entry"
@@ -688,9 +630,9 @@
         "tags": [
           "Water"
         ],
-        "summary": "Get user's daily water goal",
-        "operationId": "getDailyWaterEntry",
-        "description": "Returns the daily water intake goal for the logged-in user.",
+        "summary": "Get today data",
+        "operationId": "TodayData",
+        "description": "Return data for today.",
         "security": [
           {
             "bearerAuth": []
@@ -698,91 +640,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved the daily water goal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "number",
-                  "properties": {
-                    "dailyWaterNorm": {
-                      "description": "The daily water intake goal in milliliters"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/water/month/{id}": {
-      "get": {
-        "tags": [
-          "Water"
-        ],
-        "summary": "water",
-        "operationId": "Water",
-        "description": "entry about water intake with payload'",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "date",
-                  "amount"
-                ],
-                "properties": {
-                  "date": {
-                    "description": "Date and time of water intake",
-                    "type": "string",
-                    "example": "10:20"
-                  },
-                  "volume": {
-                    "description": "The volume of water in ml",
-                    "type": "number",
-                    "minimum": 50,
-                    "maximum": 5000,
-                    "example": 350
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully created an entry of water",
+            "description": "User data for today",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
+                    "status",
                     "message",
                     "data"
                   ],
                   "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
                     "message": {
                       "type": "string",
-                      "example": "Successfully created an entry!"
+                      "example": "Successfully The data is back!"
                     },
                     "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/water"
+                      "$ref": "#/components/schemas/tooday"
                     }
                   }
                 }
@@ -797,6 +675,61 @@
           },
           "404": {
             "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/water/month/{date}": {
+      "get": {
+        "tags": [
+          "Water"
+        ],
+        "summary": "Monthly statistics",
+        "operationId": "MonthlyStatistics",
+        "description": "Return statistics for each day of the selected month",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "description": "Date in format YYYY-MM-DDTHH:mm",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-02-05T12:33"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of water entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/month"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -819,18 +752,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "dailyGoal"
-                ],
-                "properties": {
-                  "dailyGoal": {
-                    "description": "User's water daily goal",
-                    "type": "number",
-                    "example": 50,
-                    "default": 50
-                  }
-                }
+                "$ref": "#/components/schemas/dailyGoal"
               }
             }
           }
@@ -857,8 +779,7 @@
                       "example": "Successfully updated daily goal!"
                     },
                     "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/dailyGoalWater"
+                      "$ref": "#/components/schemas/dailyGoal"
                     }
                   }
                 }
@@ -892,19 +813,13 @@
       "userSignup": {
         "type": "object",
         "required": [
-          "email",
-          "password"
+          "email"
         ],
         "properties": {
           "email": {
             "type": "string",
             "format": "email",
             "example": "user@example.com"
-          },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "example": "P@ssw0rd!"
           },
           "name": {
             "type": "string",
@@ -927,7 +842,7 @@
           "password": {
             "type": "string",
             "format": "password",
-            "example": "StrongPassword123!"
+            "example": "********"
           }
         }
       },
@@ -966,25 +881,13 @@
           }
         }
       },
-      "water": {
+      "post.Entry": {
         "type": "object",
         "required": [
-          "_id",
           "time",
-          "amount",
-          "userId"
+          "amount"
         ],
         "properties": {
-          "_id": {
-            "description": "Water entry id",
-            "type": "string",
-            "example": "65e4decdd286b37b65d54af9"
-          },
-          "userId": {
-            "description": "User id",
-            "type": "string",
-            "example": "65e4decdd286b36665d54af9"
-          },
           "time": {
             "description": "Time of water intake",
             "type": "string",
@@ -997,20 +900,65 @@
             "minimum": 50,
             "maximum": 5000,
             "example": 330
-          },
-          "createdAt": {
-            "description": "Data base generated timestamp of document creation",
-            "type": "string",
-            "example": "2025-02-05T15:00:34.055+00:00"
-          },
-          "updatedAt": {
-            "description": "Data base generated timestamp of document update",
-            "type": "string",
-            "example": "2025-02-05T15:00:34.055+00:00"
           }
         }
       },
-      "dailyGoalWater": {
+      "patchDeleteEntry": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-02-05T12:33"
+            },
+            "amount": {
+              "type": "string",
+              "example": "500 ml"
+            },
+            "percentage": {
+              "type": "string",
+              "example": "50%"
+            }
+          }
+        }
+      },
+      "tooday": {
+        "type": "object",
+        "properties": {
+          "dailyGoal": {
+            "type": "integer",
+            "description": "User's daily water intake goal in milliliters",
+            "example": 2000
+          },
+          "progress": {
+            "type": "integer",
+            "description": "Current water intake progress in milliliters",
+            "example": 0
+          },
+          "entries": {
+            "type": "array",
+            "description": "List of water intake entries",
+            "items": {
+              "type": "object"
+            },
+            "example": []
+          }
+        }
+      },
+      "month": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Monthly statistics",
+            "type": "string",
+            "format": "YYYY-MM-DD-HH:MM",
+            "example": "1970-01-01-06:30"
+          }
+        }
+      },
+      "dailyGoal": {
         "type": "object",
         "required": [
           "dailyGoal"

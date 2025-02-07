@@ -1,5 +1,4 @@
 import createHttpError from 'http-errors';
-// import mongoose from 'mongoose';
 
 import {
   addWaterEntry,
@@ -10,7 +9,6 @@ import {
   updateDailyWater,
 } from '../servises/water-servise.js';
 
-// Додавання запису про випиту воду
 export const addWaterEntryController = async (req, res) => {
   const userId = req.user._id;
 
@@ -22,7 +20,6 @@ export const addWaterEntryController = async (req, res) => {
   });
 };
 
-// Оновлення запису про випиту воду
 export const updateWaterEntryController = async (req, res) => {
   const userId = req.user._id;
   const { id } = req.params;
@@ -41,7 +38,6 @@ export const updateWaterEntryController = async (req, res) => {
   });
 };
 
-// Видалення запису про випиту воду
 export const deleteWaterEntryController = async (req, res) => {
   const { id } = req.params;
   const userId = req.user._id;
@@ -55,13 +51,13 @@ export const deleteWaterEntryController = async (req, res) => {
   res.status(204).send();
 };
 
-// Отримання місячної статистики
 export const getMonthlyWaterDataController = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { month } = req.params;
+    const { date } = req.params;
+    console.log(date);
 
-    const result = await getMonthlyWaterData(userId, month);
+    const result = await getMonthlyWaterData(userId, date);
 
     if (result.length === 0) {
       return res.status(404).json({
@@ -81,7 +77,6 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
   }
 };
 
-// отримання денної норми
 export const getDailyWaterDataController = async (req, res, next) => {
   try {
     const userId = req.user._id;

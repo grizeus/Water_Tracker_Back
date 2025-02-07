@@ -14,7 +14,6 @@ tags:
   - name: Water
     description: Operations about Water
 servers:
-  - url: http://localhost:3000
   - url: https://watertrackerbackend-5ymk.onrender.com
 paths:
   /auth/signup:
@@ -47,13 +46,13 @@ paths:
       $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
   /water/today:
     get:
-      $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
-  /water/month/{id}:
+      $ref: '../swagger/paths/water/tooday.yaml'
+  /water/month/{date}:
     get:
-      $ref: '../swagger/paths/water/monthlyWaterDataGet.yaml'
+      $ref: '../swagger/paths/water/monthlyStatistics.yaml'
   /water/daily-norma:
     patch:
-      $ref: '../swagger/paths/water/dailyWaterPatch.yaml'
+      $ref: '../swagger/paths/water/updateDaily.yaml'
 components:
   securitySchemes:
     bearerAuth:

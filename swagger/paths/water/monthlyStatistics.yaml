@@ -1,0 +1,31 @@
+tags:
+  - Water
+summary: Monthly statistics
+operationId: MonthlyStatistics
+description: Return statistics for each day of the selected month
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: date
+    required: true
+    description: Date in format YYYY-MM-DDTHH:mm
+    schema:
+      type: string
+      format: date-time
+      example: '2025-02-05T12:33'
+responses:
+  '200':
+    description: List of water entries
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/water/month.yaml'
+  '400':
+    $ref: ../../components/responses/400.yaml
+  '401':
+    $ref: ../../components/responses/401.yaml
+  '404':
+    $ref: ../../components/responses/404.yaml
+  '500':
+    $ref: ../../components/responses/500.yaml

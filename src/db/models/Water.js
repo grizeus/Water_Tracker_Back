@@ -6,9 +6,6 @@ const waterSchema = new Schema(
     time: {
       type: String,
       required: true,
-      // default: function () {
-      //   return new Date().toISOString();
-      // },
     },
     amount: {
       type: Number,

@@ -5,22 +5,12 @@ operationId: UpdateDailyWater
 description: Updating the user's daily water goal using their unique identifier.
 security:
   - bearerAuth: []
-
 requestBody:
   required: true
   content:
     application/json:
       schema:
-        type: object
-        required:
-          - dailyGoal
-        properties:
-          dailyGoal:
-            description: User's water daily goal
-            type: number
-            example: 50
-            default: 50
-
+        $ref: ../../components/schemas/water/dailyGoal.yaml
 responses:
   '200':
     description: User's daily goal successfully updated
@@ -40,9 +30,7 @@ responses:
               type: string
               example: Successfully updated daily goal!
             data:
-              type: object
-              $ref: ../../components/schemas/water/dailyGoalWater.yaml
-
+              $ref: ../../components/schemas/water/dailyGoal.yaml
   '400':
     $ref: ../../components/responses/400.yaml
   '401':
