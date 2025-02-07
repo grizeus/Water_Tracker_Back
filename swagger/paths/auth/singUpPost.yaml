@@ -5,6 +5,7 @@ operationId: signupUser
 description: 'Sign up a user with email and password'
 security: []
 requestBody:
+  required: true
   content:
     application/json:
       schema:

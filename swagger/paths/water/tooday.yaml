@@ -1,0 +1,35 @@
+tags:
+  - Water
+summary: Get today data
+operationId: TodayData
+description: Return data for today.
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: User data for today
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully The data is back!
+            data:
+              $ref: ../../components/schemas/water/tooday.yaml
+  '400':
+    $ref: ../../components/responses/400.yaml
+  '401':
+    $ref: ../../components/responses/401.yaml
+  '404':
+    $ref: ../../components/responses/404.yaml
+  '500':
+    $ref: ../../components/responses/500.yaml

@@ -6,7 +6,7 @@ export const deleteFileFromCloudinary = async (publicId) => {
     await cloudinary.uploader.destroy(publicId);
   } catch (error) {
     return createHttpError(
-      422,
+      503,
       `Failed to delete photo ${publicId} from Cloudinary:`,
       error.message,
     );

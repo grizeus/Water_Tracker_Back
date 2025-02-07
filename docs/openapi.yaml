@@ -8,13 +8,12 @@ info:
   description: Documentation of the application "Water Tracker"
 tags:
   - name: Authentication
-    description: Operations about Auth
+    description: Operations about -Auth
   - name: Users
-    description: Operations about User
+    description: Operations about -User
   - name: Water
-    description: Operations about Water
+    description: Operations about -Water
 servers:
-  - url: http://localhost:3000
   - url: https://watertrackerbackend-5ymk.onrender.com
 paths:
   /auth/signup:
@@ -47,13 +46,20 @@ paths:
       $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
   /water/today:
     get:
+<<<<<<< HEAD
+      $ref: '../swagger/paths/water/tooday.yaml'
+  /water/month/{date}:
+    get:
+      $ref: '../swagger/paths/water/monthlyStatistics.yaml'
+=======
       $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
   /water/month/{date}:
     get:
       $ref: '../swagger/paths/water/month/monthlyWaterDataGet.yaml'
+>>>>>>> 0331ab299cf328fc3388ddf78edaba1b898fd152
   /water/daily-norma:
     patch:
-      $ref: '../swagger/paths/water/dailyWaterPatch.yaml'
+      $ref: '../swagger/paths/water/updateDaily.yaml'
 components:
   securitySchemes:
     bearerAuth:

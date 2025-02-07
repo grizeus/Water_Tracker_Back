@@ -59,7 +59,7 @@ export const getDailyWaterData = async (userId) => {
     progress: Math.min(progress, 100),
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
-      time: entry.createdAt,
+      time: entry.updatedAt.toISOString().slice(0, 16),
       amount: entry.amount,
     })),
   };
@@ -121,7 +121,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   });
 };
 
-export const updateDailyWater = async (userId, dailyGoal) => {
+export const updateDailyGoal = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
     throw new Error('Daily water goal cannot exceed 15000 ml.');
   }

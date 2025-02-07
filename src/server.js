@@ -47,7 +47,7 @@ export const setupServer = () => {
   app.use(express.static('uploads'));
   app.use(cookieParser());
 
-  // app.use(logger);
+  app.use(logger);
 
   app.use('/water', waterRouter);
   app.use('/user', userRouter);
