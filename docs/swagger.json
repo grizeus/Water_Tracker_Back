@@ -7,7 +7,10 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "Documentation of the application \"Water Tracker\""
+    "description": "Documentation of the application \"Water Tracker\"",
+    "contact": {
+      "name": "Your Name"
+    }
   },
   "servers": [
     {
@@ -71,7 +74,18 @@
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/userSignup"
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "user@example.com"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Jon Voles",
+                          "description": "Optional user name (e.g., \"Jon Voles\")"
+                        }
+                      }
                     }
                   }
                 }
@@ -401,7 +415,7 @@
                 "type": "object",
                 "properties": {
                   "avatarURL": {
-                    "description": "Link to users's avatar",
+                    "description": "Link to user's avatar",
                     "type": "string",
                     "format": "binary",
                     "example": "https://res.cloudinary.com/photo/image.png"
@@ -477,7 +491,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/post.Entry"
+                "$ref": "#/components/schemas/requestEntry"
               }
             }
           }
@@ -494,13 +508,13 @@
                     "data"
                   ],
                   "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/responsEntry"
+                    },
                     "message": {
                       "type": "string",
                       "example": "Water entry added successfully"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/post.Entry"
                     }
                   }
                 }
@@ -547,9 +561,20 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/patchDeleteEntry"
+                "$ref": "#/components/schemas/requestEntry"
               }
             }
+          }
+        },
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-05T12:33"
+          },
+          "amount": {
+            "type": "string",
+            "example": "500 ml"
           }
         },
         "responses": {
@@ -561,7 +586,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/patchDeleteEntry"
+                      "$ref": "#/components/schemas/responsEntry"
                     },
                     "message": {
                       "type": "string",
@@ -579,7 +604,7 @@
             "$ref": "#/components/responses/401"
           },
           "404": {
-            "description": "Water entry not fond"
+            "$ref": "#/components/responses/404"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -660,7 +685,7 @@
                       "example": "Successfully The data is back!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/tooday"
+                      "$ref": "#/components/schemas/today"
                     }
                   }
                 }
@@ -714,7 +739,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/month"
+                  "$ref": "#/components/schemas/today"
                 }
               }
             }
@@ -813,13 +838,19 @@
       "userSignup": {
         "type": "object",
         "required": [
-          "email"
+          "email",
+          "password"
         ],
         "properties": {
           "email": {
             "type": "string",
             "format": "email",
             "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "********"
           },
           "name": {
             "type": "string",
@@ -881,13 +912,31 @@
           }
         }
       },
-      "post.Entry": {
+      "requestEntry": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-05T12:33"
+          },
+          "amount": {
+            "type": "string",
+            "example": "500 ml"
+          }
+        }
+      },
+      "responsEntry": {
         "type": "object",
         "required": [
           "time",
           "amount"
         ],
         "properties": {
+          "id": {
+            "description": "Id of entry",
+            "example": "1970-01-01-06:30"
+          },
           "time": {
             "description": "Time of water intake",
             "type": "string",
@@ -903,28 +952,7 @@
           }
         }
       },
-      "patchDeleteEntry": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "date": {
-              "type": "string",
-              "format": "date-time",
-              "example": "2025-02-05T12:33"
-            },
-            "amount": {
-              "type": "string",
-              "example": "500 ml"
-            },
-            "percentage": {
-              "type": "string",
-              "example": "50%"
-            }
-          }
-        }
-      },
-      "tooday": {
+      "today": {
         "type": "object",
         "properties": {
           "dailyGoal": {
@@ -941,20 +969,26 @@
             "type": "array",
             "description": "List of water intake entries",
             "items": {
-              "type": "object"
-            },
-            "example": []
-          }
-        }
-      },
-      "month": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "description": "Monthly statistics",
-            "type": "string",
-            "format": "YYYY-MM-DD-HH:MM",
-            "example": "1970-01-01-06:30"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Id of entry",
+                  "example": "1970-01-01-06:30"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp of the entry",
+                  "example": "2025-02-05T12:33:00Z"
+                },
+                "amount": {
+                  "type": "string",
+                  "description": "Amount of water consumed",
+                  "example": "500 ml"
+                }
+              }
+            }
           }
         }
       },

@@ -6,6 +6,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: Documentation of the application "Water Tracker"
+  contact:
+    name: Your Name
 tags:
   - name: Authentication
     description: Operations about -Auth
