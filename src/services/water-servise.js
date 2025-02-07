@@ -138,14 +138,17 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
 
   const currentDay = new Date(Date.now()).toISOString().split('T')[0];
 
-  // update of today's records
-  const updatedEntries = await WaterCollection.updateMany(
-    { userId, time: { $regex: `^${currentDay}` } },
-    { $set: dailyGoal },
-  );
-
-  if (updatedEntries.matchedCount !== updatedEntries.modifiedCount) {
-    throw new Error('Not every entry was updated');
+  // update of today's records if they exist
+  const entries = await WaterCollection.find({ userId, time: { $regex: `^${currentDay}` } });
+  if (entries.length !== 0) {
+    const updatedEntries = await WaterCollection.updateMany(
+      { userId, time: { $regex: `^${currentDay}` } },
+      { $set: { dailyGoal: dailyGoal } },
+    );
+ 
+    if (updatedEntries.matchedCount !== updatedEntries.modifiedCount) {
+      throw new Error('Not every entry was updated');
+    }
   }
 
   return { dailyGoal: updatedUser.dailyGoal };

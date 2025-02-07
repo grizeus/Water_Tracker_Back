@@ -108,7 +108,6 @@ export const getDailyWaterDataController = async (req, res, next) => {
 };
 
 export const updateDailyWaterController = async (req, res) => {
-  try {
     const userId = req.user._id;
     const { dailyGoal } = req.body;
 
@@ -126,10 +125,4 @@ export const updateDailyWaterController = async (req, res) => {
       message: 'Daily water goal updated successfully.',
       data: result.dailyGoal,
     });
-  } catch (error) {
-    res.status(400).json({
-      status: 400,
-      message: error.message,
-    });
-  }
 };
