@@ -46,10 +46,17 @@ paths:
       $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
   /water/today:
     get:
+<<<<<<< HEAD
       $ref: '../swagger/paths/water/tooday.yaml'
   /water/month/{date}:
     get:
       $ref: '../swagger/paths/water/monthlyStatistics.yaml'
+=======
+      $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
+  /water/month/{date}:
+    get:
+      $ref: '../swagger/paths/water/month/monthlyWaterDataGet.yaml'
+>>>>>>> 0331ab299cf328fc3388ddf78edaba1b898fd152
   /water/daily-norma:
     patch:
       $ref: '../swagger/paths/water/updateDaily.yaml'

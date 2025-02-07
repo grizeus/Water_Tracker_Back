@@ -6,7 +6,7 @@ import {
   deleteWaterEntry,
   getDailyWaterData,
   getMonthlyWaterData,
-  updateDailyWater,
+  updateDailyGoal,
 } from '../services/water-servise.js';
 
 export const addWaterEntryController = async (req, res) => {
@@ -119,7 +119,7 @@ export const updateDailyWaterController = async (req, res) => {
       });
     }
 
-    const result = await updateDailyWater(userId, dailyGoal);
+    const result = await updateDailyGoal(userId, dailyGoal);
 
     res.status(200).json({
       status: 200,

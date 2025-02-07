@@ -19,6 +19,13 @@ const waterSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    dailyGoal: {
+      type: Number,
+      required: true,
+      min: 50,
+      max: 15000,
+      default: 2000,
+    },
   },
   {
     timestamps: true,
@@ -30,5 +37,5 @@ waterSchema.post('save', handleSaveError);
 waterSchema.pre('findOneAndUpdate', setUpdateSettings);
 waterSchema.post('findOneAndUpdate', handleSaveError);
 
-const WaterCollections = model('water', waterSchema);
-export default WaterCollections;
+const WaterCollection = model('water', waterSchema);
+export default WaterCollection;
