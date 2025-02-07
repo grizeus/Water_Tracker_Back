@@ -14,7 +14,11 @@ export const addWaterEntryController = async (req, res) => {
   const result = await addWaterEntry({ userId, ...req.body });
 
   res.status(201).json({
-    data: result,
+    data: {
+      time: result.time,
+      amount: result.amount,
+      _id: result._id,
+    },
     message: 'Water entry added successfully',
   });
 };
@@ -32,7 +36,11 @@ export const updateWaterEntryController = async (req, res) => {
   }
 
   res.status(200).json({
-    data: result,
+    data: {
+      time: result.time,
+      amount: result.amount,
+      _id: result._id,
+    },
     message: 'Water entry updated successfully',
   });
 };
@@ -54,7 +62,6 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const { date } = req.params;
-    console.log(date);
 
     const result = await getMonthlyWaterData(userId, date);
 
