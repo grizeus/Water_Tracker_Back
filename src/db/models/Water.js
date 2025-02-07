@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 
 const waterSchema = new Schema(
@@ -25,7 +26,6 @@ const waterSchema = new Schema(
   },
 );
 
-// Хук для обробки помилок
 waterSchema.post('save', handleSaveError);
 waterSchema.pre('findOneAndUpdate', setUpdateSettings);
 waterSchema.post('findOneAndUpdate', handleSaveError);

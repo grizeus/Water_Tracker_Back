@@ -1,7 +1,5 @@
 import { Router } from 'express';
 
-import * as waterControllers from '../controllers/water.js';
-
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 import { authenticate } from '../middlewares/authenticate.js';
@@ -9,6 +7,8 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 
 import { waterEntrySchema, dailyGoalSchema } from '../validation/water.js';
+
+import * as waterControllers from '../controllers/water.js';
 
 const waterRouter = Router();
 

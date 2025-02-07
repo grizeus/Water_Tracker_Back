@@ -19,6 +19,12 @@ export const userInfoSchema = Joi.object({
     'string.max': 'Old password must be at most 64 characters long.',
   }),
 
+  newPassword: Joi.string().min(8).max(64).messages({
+    'string.base': 'Old password must be a string.',
+    'string.min': 'Old password must be at least 8 characters long.',
+    'string.max': 'Old password must be at most 64 characters long.',
+  }),
+
   gender: Joi.string()
     .valid(...genderList)
     .messages({

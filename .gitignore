@@ -7,5 +7,5 @@
 .idea
 
 
-# файл для збереження пулів
+# files for saving request pools
 pullrequests-list.txt

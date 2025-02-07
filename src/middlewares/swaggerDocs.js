@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs';
+
 import swaggerUiExpress from 'swagger-ui-express';
 
-import { SWAGGER_PATH } from '../constants/index.js';
 import createHttpError from 'http-errors';
+
+import { SWAGGER_PATH } from '../constants/index.js';
 
 export const swaggerDocs = () => {
   try {

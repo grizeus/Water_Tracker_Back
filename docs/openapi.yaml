@@ -8,11 +8,11 @@ info:
   description: Documentation of the application "Water Tracker"
 tags:
   - name: Authentication
-    description: Operations about Auth
+    description: Operations about -Auth
   - name: Users
-    description: Operations about User
+    description: Operations about -User
   - name: Water
-    description: Operations about Water
+    description: Operations about -Water
 servers:
   - url: https://watertrackerbackend-5ymk.onrender.com
 paths:
