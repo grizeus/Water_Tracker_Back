@@ -24,7 +24,7 @@ responses:
               type: string
               example: Successfully The data is back!
             data:
-              $ref: "../../components/schemas/water/tooday.yaml"
+              $ref: "../../components/schemas/water/today.yaml"
   '400':
     $ref: "../../components/responses/400.yaml"
   '401':
@@ -32,4 +32,4 @@ responses:
   '404':
     $ref: "../../components/responses/404.yaml"
   '500':
-    $ref: " ../../components/responses/500.yaml"
+    $ref: "../../components/responses/500.yaml"
