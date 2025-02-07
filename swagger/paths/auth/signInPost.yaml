@@ -1,18 +1,18 @@
 tags:
   - Authentication
-summary: Sign up a new user
-operationId: signupUser
-description: 'Sign up a user with email and password'
+summary: Sign in a user
+operationId: signInUser
+description: 'Sign in a user with email and password'
 security: []
 requestBody:
   required: true
   content:
     application/json:
       schema:
-        $ref: '../../components/schemas/auth/userSignup.yaml'
+        $ref: "../../components/schemas/auth/userSignIn.yaml"
 responses:
-  '201':
-    description: User signed up successfully
+  '200':
+    description: User signed in successfully
     content:
       application/json:
         schema:
@@ -24,14 +24,19 @@ responses:
           properties:
             status:
               type: integer
-              example: 201
+              example: 200
             message:
               type: string
-              example: Successfully signed up a user!
+              example: Successfully logged in a user!
             data:
               type: object
-              $ref: '../../components/schemas/auth/userSignup.yaml'
+              properties:
+                accessToken:
+                  type: string
+                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   '400':
     $ref: '../../components/responses/400.yaml'
+  '404':
+    $ref: '../../components/responses/401.yaml'
   '500':
     $ref: '../../components/responses/500.yaml'

@@ -10,7 +10,7 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: ../../components/schemas/water/dailyGoal.yaml
+        $ref: "../../components/schemas/water/dailyGoal.yaml"
 responses:
   '200':
     description: User's daily goal successfully updated
@@ -30,12 +30,12 @@ responses:
               type: string
               example: Successfully updated daily goal!
             data:
-              $ref: ../../components/schemas/water/dailyGoal.yaml
+              $ref: "../../components/schemas/water/dailyGoal.yaml"
   '400':
-    $ref: ../../components/responses/400.yaml
+    $ref: "../../components/responses/400.yaml"
   '401':
-    $ref: ../../components/responses/401.yaml
+    $ref: "../../components/responses/401.yaml"
   '404':
-    $ref: ../../components/responses/404.yaml
+    $ref: "../../components/responses/404.yaml"
   '500':
-    $ref: ../../components/responses/500.yaml
+    $ref: "../../components/responses/500.yaml"

@@ -18,10 +18,10 @@ servers:
 paths:
   /auth/signup:
     post:
-      $ref: '../swagger/paths/auth/singUpPost.yaml'
+      $ref: '../swagger/paths/auth/signUpPost.yaml'
   /auth/signin:
     post:
-      $ref: '../swagger/paths/auth/singInPost.yaml'
+      $ref: '../swagger/paths/auth/signInPost.yaml'
   /auth/logout:
     post:
       $ref: '../swagger/paths/auth/logoutPost.yaml'
@@ -46,17 +46,10 @@ paths:
       $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
   /water/today:
     get:
-<<<<<<< HEAD
       $ref: '../swagger/paths/water/tooday.yaml'
   /water/month/{date}:
     get:
       $ref: '../swagger/paths/water/monthlyStatistics.yaml'
-=======
-      $ref: '../swagger/paths/water/dailyWaterDataGet.yaml'
-  /water/month/{date}:
-    get:
-      $ref: '../swagger/paths/water/month/monthlyWaterDataGet.yaml'
->>>>>>> 0331ab299cf328fc3388ddf78edaba1b898fd152
   /water/daily-norma:
     patch:
       $ref: '../swagger/paths/water/updateDaily.yaml'

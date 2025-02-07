@@ -13,7 +13,7 @@ requestBody:
         type: object
         properties:
           avatarURL:
-            description: "Link to users's avatar"
+            description: "Link to user's avatar"
             type: string
             format: binary
             example: https://res.cloudinary.com/photo/image.png
@@ -37,9 +37,9 @@ responses:
               example: User avatar updated
             data:
               type: object
-              $ref: ../../components/schemas/user/user.yaml
+              $ref: '../../components/schemas/user/user.yaml'
   '400':
-    $ref: ../../components/responses/400.yaml
+    $ref: '../../components/responses/400.yaml'
   '401':
     $ref: '../../components/responses/401.yaml'
   '404':
@@ -47,4 +47,4 @@ responses:
   '500':
     $ref: '../../components/responses/500.yaml'
   '503':
-    $ref: ../../components/responses/503.yaml
+    $ref: '../../components/responses/503.yaml'

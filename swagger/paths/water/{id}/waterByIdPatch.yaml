@@ -16,7 +16,7 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: ../../../components/schemas/water/patchDeleteEntry.yaml
+        $ref: '../../../components/schemas/water/patchDeleteEntry.yaml'
 responses:
   '200':
     description: Water entry updated successfully
@@ -26,7 +26,7 @@ responses:
           type: object
           properties:
             data:
-              $ref: ../../../components/schemas/water/patchDeleteEntry.yaml
+              $ref: '../../../components/schemas/water/patchDeleteEntry.yaml'
             message:
               type: string
               example: 'Water entry updated successfully'
@@ -35,6 +35,6 @@ responses:
   '401':
     $ref: '../../../components/responses/401.yaml'
   '404':
-    description: 'Water entry not fond'
+    $ref: '../../../components/responses/404.yaml'
   '500':
     $ref: '../../../components/responses/500.yaml'
