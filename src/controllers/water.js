@@ -15,9 +15,9 @@ export const addWaterEntryController = async (req, res) => {
 
   res.status(201).json({
     data: {
+      _id: result._id,
       time: result.time,
       amount: result.amount,
-      _id: result._id,
     },
     message: 'Water entry added successfully',
   });
@@ -32,7 +32,7 @@ export const updateWaterEntryController = async (req, res) => {
   const result = await updateWaterEntry(id, { amount, time }, userId);
 
   if (!result) {
-    throw createHttpError(404, 'Water entry not found');
+    throw createHttpError(400, 'The request cannot be processed.');
   }
 
   res.status(200).json({
@@ -52,7 +52,7 @@ export const deleteWaterEntryController = async (req, res) => {
   const result = await deleteWaterEntry(id, userId);
 
   if (!result) {
-    throw createHttpError(404, 'Water entry not found');
+    throw createHttpError(400, 'The request cannot be processed.');
   }
 
   res.status(204).send();
@@ -65,13 +65,10 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
 
     const result = await getMonthlyWaterData(userId, date);
 
-    if (result.length === 0) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No water consumption data found for this month',
-        data: [],
-      });
+    if (!result) {
+      throw createHttpError(400, 'The request cannot be processed.');
     }
+  
 
     res.status(200).json({
       status: 200,
@@ -84,27 +81,21 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
 };
 
 export const getDailyWaterDataController = async (req, res, next) => {
-  try {
     const userId = req.user._id;
 
     const result = await getDailyWaterData(userId);
 
     if (!result) {
-      return res.status(404).json({
-        status: 404,
-        message: 'No entries found for today',
-        data: null,
-      });
+      throw createHttpError(400,
+        'The request cannot be processed.'
+      )
     }
 
     res.status(200).json({
       status: 200,
       data: result,
-      message: 'Daily water goal retrieved successfully',
+      message: 'Today date not found',
     });
-  } catch (error) {
-    next(error);
-  }
 };
 
 export const updateDailyWaterController = async (req, res) => {
@@ -112,10 +103,9 @@ export const updateDailyWaterController = async (req, res) => {
     const { dailyGoal } = req.body;
 
     if (!dailyGoal) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Daily goal is required.',
-      });
+      throw createHttpError(400,
+        'The request cannot be processed.'
+      )
     }
 
     const result = await updateDailyGoal(userId, dailyGoal);
