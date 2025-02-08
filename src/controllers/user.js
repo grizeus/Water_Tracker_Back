@@ -10,13 +10,9 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 export const getUserController = async (req, res, next) => {
   const userId = req.user._id;
   const user = await getUserById(userId);
-  console.log('hello');
 
   if (!user) {
-    return res.status(400).json({
-      status: 400,
-      message: 'The request cannot be processed.',
-    });
+    return createHttpError(404,'The request cannot be processed.');
   }
 
   res.json({
@@ -37,11 +33,8 @@ export const updateUserController = async (req, res, next) => {
   const userDataToUpdate = req.body;
   const newUserData = await updateUser(userId, userDataToUpdate);
 
-  if (!newUserData) {
-    return res.status(400).json({
-      status: 400,
-      message: 'The request cannot be processed.',
-    });
+  if (!newUserData)  {
+    return createHttpError(404,'The request cannot be processed.');
   }
 
   res.status(200).json({
@@ -58,36 +51,37 @@ export const updateUserController = async (req, res, next) => {
 };
 
 export const updateAvatarController = async (req, res, next) => {
-  const userId = req.user._id;
-  let avatarURL;
-  if (req.file) {
+  try {
+    const userId = req.user._id;
+    
+    if (!req.file) {
+      return next(createHttpError(400, 'Avatar file is required'));
+    }
+    
+    let avatarURL;
     try {
       avatarURL = await saveFileToCloudinary(req.file);
-    } catch {
+    } catch (error) {
       return next(
         createHttpError(
           503,
-          'There was an error connecting to an external service. Please try again later.',
-        ),
+          'There was an error connecting to an external service. Please try again later.'
+        )
       );
     }
-  }
-
-  if (!req.file) {
-    return next(createHttpError(400, 'Avatar URL is required'));
-  }
-
-  const updatedAvatar = await updateAvatar(userId, avatarURL);
-
-  if (!updatedAvatar) {
-    return res.status(400).json({
-      message: 'The request cannot be processed.',
+    
+    const updatedAvatar = await updateAvatar(userId, avatarURL);
+    
+    if (!updatedAvatar) {
+      return next(createHttpError(400, 'The request cannot be processed.'));
+    }
+    
+    return res.status(200).json({
+      status: 200,
+      message: 'Successfully updated avatar',
+      avatarURL: updatedAvatar.avatarURL,
     });
+  } catch (error) {
+    return next(error);
   }
-
-  return res.status(200).json({
-    status: 200,
-    message: 'Successfully updated avatar',
-    avatarURL: updatedAvatar.avatarURL,
-  });
 };

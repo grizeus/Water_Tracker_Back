@@ -14,17 +14,14 @@ const userRouter = Router();
 
 userRouter.use(authenticate);
 
-// Маршрут для отримання інформації про користувача
 userRouter.get('/', ctrlWrapper(userControllers.getUserController));
 
-// Маршрут для оновлення інформації про користувача
 userRouter.patch(
   '/',
   validateBody(userInfoSchema),
   ctrlWrapper(userControllers.updateUserController),
 );
 
-// Маршрут для оновлення аватара
 userRouter.patch(
   '/avatar',
   upload.single('avatarURL'),
