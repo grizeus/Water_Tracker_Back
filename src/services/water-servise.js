@@ -30,7 +30,6 @@ export const deleteWaterEntry = async (id, userId) => {
   return result;
 };
 
-// Отримання денної статистики
 export const getDailyWaterData = async (userId) => {
   const today = new Date();
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
@@ -53,10 +52,15 @@ export const getDailyWaterData = async (userId) => {
 
   const dailyGoal = user.dailyGoal;
   const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
+  const dailyGoalLiters = (dailyGoal / 1000).toFixed(1) + "L";
+  
+  const dateObj = new Date();
+  const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString('en-US', { month: 'long' })}`;
 
   return {
-    dailyGoal: dailyGoal,
+    dailyGoalLiters: dailyGoalLiters,
     progress: Math.min(progress, 100),
+    formattedDate: formattedDate,
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
       time: entry.updatedAt.toISOString().slice(0, 16),
@@ -64,6 +68,7 @@ export const getDailyWaterData = async (userId) => {
     })),
   };
 };
+
 
 export const getMonthlyWaterData = async (userId, month) => {
   const normalizedMonth = month.slice(0, 7);
@@ -77,25 +82,19 @@ export const getMonthlyWaterData = async (userId, month) => {
   }).lean();
 
   if (!waterEntries.length) {
-    return null;
+    return [];
   }
 
-  const user = await UserCollections.findById(userId);
-  const todayGoal = user && user.dailyGoal;
-
-  // Групуємо дані по днях
   const dailyData = waterEntries.reduce((acc, entry) => {
     const dateObj = new Date(entry.createdAt);
-    const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString(
-      'en-US',
-      { month: 'long' },
-    )}`;
+    const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString('en-US', { month: 'long' })}`;
 
     if (!acc[formattedDate]) {
       acc[formattedDate] = {
         date: formattedDate,
         totalAmount: 0,
         entriesCount: 0,
+        dailyGoal: entry.dailyGoal || 2000,
       };
     }
 
@@ -106,15 +105,14 @@ export const getMonthlyWaterData = async (userId, month) => {
   }, {});
 
   return Object.values(dailyData).map((day) => {
-    let percentage = (day.totalAmount / todayGoal) * 100;
-
+    let percentage = (day.totalAmount / day.dailyGoal) * 100;
     if (percentage > 100) {
       percentage = 100;
     }
 
     return {
       date: day.date,
-      dailyGoal: (todayGoal / 1000).toFixed(1) + ' L',
+      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
       percentage: percentage.toFixed(0) + '%',
       entriesCount: day.entriesCount,
     };
