@@ -77,8 +77,8 @@ export const getMonthlyWaterData = async (userId, month) => {
     createdAt: { $gte: startOfMonth, $lt: endOfMonth },
   }).lean();
 
-  if (!waterEntries.length) {
-    return null;
+  if (!userId) {
+    throw new Error('User not found.');
   }
 
   const dailyData = waterEntries.reduce((acc, entry) => {
