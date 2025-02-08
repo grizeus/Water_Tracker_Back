@@ -5,8 +5,13 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { validateParams } from '../middlewares/validateParams.js';
 
-import { waterEntrySchema, dailyGoalSchema } from '../validation/water.js';
+import {
+  waterEntrySchema,
+  dailyGoalSchema,
+  monthFormatSchema,
+} from '../validation/water.js';
 
 import * as waterControllers from '../controllers/water.js';
 
@@ -39,7 +44,8 @@ waterRouter.get(
 );
 
 waterRouter.get(
-  '/month/:date',
+  '/month/:month',
+  validateParams(monthFormatSchema),
   ctrlWrapper(waterControllers.getMonthlyWaterDataController),
 );
 
