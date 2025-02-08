@@ -7,7 +7,7 @@ import {
   getDailyWaterData,
   getMonthlyWaterData,
   updateDailyGoal,
-} from '../services/water-servise.js';
+} from '../services/water.js';
 
 export const addWaterEntryController = async (req, res) => {
   const userId = req.user._id;
@@ -88,7 +88,7 @@ export const getDailyWaterDataController = async (req, res, next) => {
     if (!result) {
       throw createHttpError(404,
         'The request cannot be processed.'
-      )
+      );
     }
 
     res.status(200).json({
@@ -105,7 +105,7 @@ export const updateDailyWaterController = async (req, res) => {
     if (!dailyGoal) {
       throw createHttpError(400,
         'The request cannot be processed.'
-      )
+      );
     }
 
     const result = await updateDailyGoal(userId, dailyGoal);

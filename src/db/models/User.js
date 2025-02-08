@@ -46,10 +46,6 @@ const authSchema = new Schema(
       max: 15000,
       default: 2000,
     },
-    token: {
-      type: String,
-      default: null,
-    },
   },
   {
     versionKey: false,

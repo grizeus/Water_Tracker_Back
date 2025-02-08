@@ -60,5 +60,5 @@ export const setupServer = () => {
 
   const port = Number(getEnvVar('PORT', 3000));
 
-  app.listen(port, () => console.log('Server running on 3000 port'));
+  app.listen(port, () => console.log(`Server running on ${port} port`));
 };

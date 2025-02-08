@@ -24,7 +24,7 @@ responses:
           properties:
             data:
               type: object
-              $ref: '../../components/schemas/water/responsEntry.yaml'
+              $ref: '../../components/schemas/water/responseEntry.yaml'
             message:
               type: string
               example: 'Water entry added successfully'
