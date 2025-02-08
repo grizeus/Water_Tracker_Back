@@ -7,10 +7,7 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "Documentation of the application \"Water Tracker\"",
-    "contact": {
-      "name": "Your Name"
-    }
+    "description": "Documentation of the application \"Water Tracker\""
   },
   "servers": [
     {
@@ -510,7 +507,7 @@
                   "properties": {
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/responsEntry"
+                      "$ref": "#/components/schemas/responseEntry"
                     },
                     "message": {
                       "type": "string",
@@ -552,7 +549,7 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "integer",
+              "type": "string",
               "example": "65ca67e7ae7f10c88b598384"
             }
           }
@@ -566,17 +563,6 @@
             }
           }
         },
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2025-02-05T12:33"
-          },
-          "amount": {
-            "type": "string",
-            "example": "500 ml"
-          }
-        },
         "responses": {
           "200": {
             "description": "Water entry updated successfully",
@@ -586,7 +572,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/responsEntry"
+                      "$ref": "#/components/schemas/responseEntry"
                     },
                     "message": {
                       "type": "string",
@@ -915,27 +901,27 @@
       "requestEntry": {
         "type": "object",
         "properties": {
-          "date": {
+          "time": {
             "type": "string",
             "format": "date-time",
             "example": "2025-02-05T12:33"
           },
           "amount": {
             "type": "string",
-            "example": "500 ml"
+            "example": "500"
           }
         }
       },
-      "responsEntry": {
+      "responseEntry": {
         "type": "object",
         "required": [
           "time",
           "amount"
         ],
         "properties": {
-          "id": {
+          "_id": {
             "description": "Id of entry",
-            "example": "1970-01-01-06:30"
+            "example": "67a77c49677ee8b875a0595f"
           },
           "time": {
             "description": "Time of water intake",
@@ -956,14 +942,14 @@
         "type": "object",
         "properties": {
           "dailyGoal": {
-            "type": "integer",
-            "description": "User's daily water intake goal in milliliters",
-            "example": 2000
+            "type": "string",
+            "description": "User's daily water goal in liters",
+            "example": "2.0 L"
           },
           "progress": {
-            "type": "integer",
-            "description": "Current water intake progress in milliliters",
-            "example": 0
+            "type": "string",
+            "description": "Current water progress",
+            "example": "26%"
           },
           "entries": {
             "type": "array",
@@ -974,18 +960,18 @@
                 "id": {
                   "type": "string",
                   "description": "Id of entry",
-                  "example": "1970-01-01-06:30"
+                  "example": "67a745da8e88d714522e8dca"
                 },
-                "date": {
+                "time": {
                   "type": "string",
                   "format": "date-time",
                   "description": "Timestamp of the entry",
                   "example": "2025-02-05T12:33:00Z"
                 },
                 "amount": {
-                  "type": "string",
+                  "type": "number",
                   "description": "Amount of water consumed",
-                  "example": "500 ml"
+                  "example": 500
                 }
               }
             }
