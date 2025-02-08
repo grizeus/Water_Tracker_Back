@@ -23,7 +23,7 @@ export const dailyGoalSchema = Joi.object({
   }),
 });
 
-export const validateMonthParam = Joi.object({
+export const monthFormatSchema = Joi.object({
   month: Joi.string()
     .pattern(/^\d{4}-(0[1-9]|1[0-2])$/)
     .required()
