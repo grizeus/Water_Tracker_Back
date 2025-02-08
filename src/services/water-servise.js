@@ -66,12 +66,12 @@ export const getDailyWaterData = async (userId) => {
 };
 
 export const getMonthlyWaterData = async (userId, month) => {
-  const normalizedMonth = month.slice(0, 7);
 
-  const startOfMonth = new Date(`${normalizedMonth}-01T00:00:00.000Z`);
+  
+  const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
   
   const endOfMonth = new Date(startOfMonth);
-  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1); // Додаємо 1 місяць до стартової дати
 
   const waterEntries = await WaterCollection.find({
     userId: userId,
@@ -80,10 +80,6 @@ export const getMonthlyWaterData = async (userId, month) => {
 
   if (!userId) {
     throw new Error('User not found.');
-  }
-
-  if (waterEntries.length === 0) {
-    throw new Error('No water entries found for the selected month.');
   }
 
   const formatDate = (date) => {
@@ -95,10 +91,12 @@ export const getMonthlyWaterData = async (userId, month) => {
     return `${year}-${month}-${day}-${hours}:${minutes}`;
   };
 
+  
   const dailyData = waterEntries.reduce((acc, entry) => {
     const dateObj = new Date(entry.createdAt);
     const formattedDate = formatDate(dateObj);
 
+    
     if (!acc[formattedDate]) {
       acc[formattedDate] = {
         date: formattedDate,
@@ -108,27 +106,25 @@ export const getMonthlyWaterData = async (userId, month) => {
       };
     }
 
+    
     acc[formattedDate].totalAmount += entry.amount;
     acc[formattedDate].entriesCount += 1;
 
     return acc;
   }, {});
 
-  if (Object.keys(dailyData).length === 0) {
-    throw new Error('No water entries found for any day in the selected month.');
-  }
-
+  
   return Object.values(dailyData).map((day) => {
     let percentage = (day.totalAmount / day.dailyGoal) * 100;
     if (percentage > 100) {
-      percentage = 100;
+      percentage = 100; 
     }
 
     return {
       date: day.date, 
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      percentage: percentage.toFixed(0) + '%',
-      entriesCount: day.entriesCount,
+      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L', 
+      percentage: percentage.toFixed(0) + '%', 
+      entriesCount: day.entriesCount, 
     };
   });
 };

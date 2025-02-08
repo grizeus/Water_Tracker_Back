@@ -22,3 +22,13 @@ export const dailyGoalSchema = Joi.object({
     'number.max': 'Daily goal must be no more than 15000.',
   }),
 });
+
+export const validateMonthParam = Joi.object({
+  month: Joi.string()
+    .pattern(/^\d{4}-(0[1-9]|1[0-2])$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'The date must be in the format YYYY-MM (e.g., 2025-02)',
+      'any.required': 'The month parameter is required',
+    }),
+});

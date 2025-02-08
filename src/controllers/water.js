@@ -61,9 +61,9 @@ export const deleteWaterEntryController = async (req, res) => {
 export const getMonthlyWaterDataController = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { date } = req.params;
+    const { month } = req.params;
 
-    const result = await getMonthlyWaterData(userId, date);
+    const result = await getMonthlyWaterData(userId, month);
 
     if (!result) {
       throw createHttpError(404, 'The request cannot be processed.');
