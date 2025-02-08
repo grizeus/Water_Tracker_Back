@@ -108,6 +108,6 @@ https://watertrackerbackend-5ymk.onrender.com/api-docs/
 
 This project is deployed on **Render**. You can access the live API at:
 
-[API Base URL](https://watertrackerbackend-5ymk.onrender.com)
+https://watertrackerbackend-5ymk.onrender.com
 
 Make sure to update the URL with your actual Render deployment link.
