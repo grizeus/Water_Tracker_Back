@@ -1,10 +1,10 @@
 type: object
 properties:
-  date:
+  time:
     type: string
     format: date-time
     example: '2025-02-05T12:33'
   amount:
     type: string
-    example: '500 ml'
+    example: '500'
 

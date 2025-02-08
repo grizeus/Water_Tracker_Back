@@ -1,10 +1,11 @@
-import { create } from 'domain';
+import createHttpError from 'http-errors';
+
 import {
   registerUser,
   loginUser,
   refresh,
   logout,
-} from '../services/auth-servise.js';
+} from '../services/auth.js';
 
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
