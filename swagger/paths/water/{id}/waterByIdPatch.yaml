@@ -10,21 +10,13 @@ parameters:
     name: id
     required: true
     schema:
-      type: integer
+      type: string
       example: '65ca67e7ae7f10c88b598384'
 requestBody:
   content:
     application/json:
       schema:
        $ref : '../../../components/schemas/water/requestEntry.yaml'
-properties:
-  date:
-    type: string
-    format: date-time
-    example: '2025-02-05T12:33'
-  amount:
-    type: string
-    example: '500 ml'
 responses:
   '200':
     description: Water entry updated successfully
@@ -34,7 +26,7 @@ responses:
           type: object
           properties:
             data:
-              $ref: '../../../components/schemas/water/responsEntry.yaml'
+              $ref: '../../../components/schemas/water/responseEntry.yaml'
             message:
               type: string
               example: 'Water entry updated successfully'
