@@ -66,14 +66,14 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
     const result = await getMonthlyWaterData(userId, date);
 
     if (!result) {
-      throw createHttpError(400, 'The request cannot be processed.');
+      throw createHttpError(404, 'The request cannot be processed.');
     }
   
 
     res.status(200).json({
       status: 200,
       data: result,
-      message: 'Monthly water data retrieved successfully',
+      message: 'Successfully,Monthly water data found',
     });
   } catch (error) {
     next(error);
@@ -86,7 +86,7 @@ export const getDailyWaterDataController = async (req, res, next) => {
     const result = await getDailyWaterData(userId);
 
     if (!result) {
-      throw createHttpError(400,
+      throw createHttpError(404,
         'The request cannot be processed.'
       )
     }
@@ -94,7 +94,7 @@ export const getDailyWaterDataController = async (req, res, next) => {
     res.status(200).json({
       status: 200,
       data: result,
-      message: 'Today date not found',
+      message: 'Successfully, today date found.',
     });
 };
 

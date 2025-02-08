@@ -54,13 +54,9 @@ export const getDailyWaterData = async (userId) => {
   const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
   const dailyGoalLiters = (dailyGoal / 1000).toFixed(1) + "L";
   
-  const dateObj = new Date();
-  const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleString('en-US', { month: 'long' })}`;
-
   return {
     dailyGoalLiters: dailyGoalLiters,
     progress: Math.min(progress, 100),
-    formattedDate: formattedDate,
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
       time: entry.updatedAt.toISOString().slice(0, 16),
@@ -82,7 +78,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   }).lean();
 
   if (!waterEntries.length) {
-    return [];
+    return null;
   }
 
   const dailyData = waterEntries.reduce((acc, entry) => {
@@ -136,7 +132,6 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
 
   const currentDay = new Date(Date.now()).toISOString().split('T')[0];
 
-  // update of today's records if they exist
   const entries = await WaterCollection.find({ userId, time: { $regex: `^${currentDay}` } });
   if (entries.length !== 0) {
     const updatedEntries = await WaterCollection.updateMany(
