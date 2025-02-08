@@ -73,7 +73,7 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
     res.status(200).json({
       status: 200,
       data: result,
-      message: 'Successfully,Monthly water data found',
+      message: 'Monthly water data has been successfully received',
     });
   } catch (error) {
     next(error);

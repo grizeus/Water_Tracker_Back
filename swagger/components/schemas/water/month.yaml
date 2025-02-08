@@ -3,7 +3,8 @@ properties:
   formattedDate:
     description: 'Monthly statistics'
     type: string
-    example: '5, April'
+    format: 'YYYY-MM-DD-HH:MM'
+    example: '2025-01-12-15:44'
   dailyGoal:
     description: 'The daily norm of the given day'
     type: string
@@ -16,8 +17,3 @@ properties:
     description: 'Number of water records'
     type: number
     example: 3
-    
-
-
-      # percentage: percentage.toFixed(0) + '%',
-      # entriesCount: day.entriesCount,
