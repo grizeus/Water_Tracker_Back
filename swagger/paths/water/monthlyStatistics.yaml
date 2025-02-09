@@ -20,7 +20,7 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/water/mounth.yaml'
+          $ref: '../../components/schemas/water/month.yaml'
   '400':
     $ref: '../../components/responses/400.yaml'
   '401':

@@ -787,11 +787,11 @@
             "in": "path",
             "name": "date",
             "required": true,
-            "description": "Date in format YYYY-MM-DDTHH:mm",
+            "description": "Date in format YYYY-MM",
             "schema": {
               "type": "string",
               "format": "date-time",
-              "example": "2025-02-05T12:33"
+              "example": "2025-02"
             }
           }
         ],
@@ -801,7 +801,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/today"
+                  "$ref": "#/components/schemas/month"
                 }
               }
             }
@@ -1051,6 +1051,32 @@
                 }
               }
             }
+          }
+        }
+      },
+      "month": {
+        "type": "object",
+        "properties": {
+          "formattedDate": {
+            "description": "Monthly statistics",
+            "type": "string",
+            "format": "YYYY-MM",
+            "example": "2025-01"
+          },
+          "dailyGoal": {
+            "description": "The daily norm of the given day",
+            "type": "string",
+            "example": "2.O L"
+          },
+          "percentage": {
+            "description": "Calculation of the percentage of water drunk in accordance with the norm of a given day",
+            "type": "string",
+            "example": "28%"
+          },
+          "entriesCount": {
+            "description": "Number of water records",
+            "type": "number",
+            "example": 3
           }
         }
       },
