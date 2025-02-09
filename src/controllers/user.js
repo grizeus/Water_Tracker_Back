@@ -61,6 +61,7 @@ export const updateAvatarController = async (req, res, next) => {
     let avatarURL;
     try {
       avatarURL = await saveFileToCloudinary(req.file);
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       return next(
         createHttpError(

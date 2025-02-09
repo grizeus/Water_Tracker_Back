@@ -9,18 +9,18 @@ parameters:
   - in: path
     name: date
     required: true
-    description: Date in format YYYY-MM-DDTHH:mm
+    description: Date in format YYYY-MM
     schema:
       type: string
       format: date-time
-      example: '2025-02-05T12:33'
+      example: '2025-02'
 responses:
   '200':
     description: List of water entries
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/water/today.yaml'
+          $ref: '../../components/schemas/water/mounth.yaml'
   '400':
     $ref: '../../components/responses/400.yaml'
   '401':
