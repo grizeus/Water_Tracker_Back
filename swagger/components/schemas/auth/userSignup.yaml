@@ -10,3 +10,6 @@ properties:
   password:
     type: string
     format: password
+    minLength: 8
+    maxLength: 64
+    example: 'Verystrongpassword1'
