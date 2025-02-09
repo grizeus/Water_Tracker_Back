@@ -32,13 +32,15 @@ export const deleteWaterEntry = async (id, userId) => {
 
 export const getDailyWaterData = async (userId) => {
   const today = new Date();
-  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateString = `${year}-${month}-${day}`;
 
   const waterEntries = await WaterCollection.find({
     userId: userId,
-    createdAt: { $gte: startOfDay, $lte: endOfDay },
-  }).sort({ createdAt: -1 });
+    time: { $regex: `^${dateString}` },
+  }).sort({ time: 1 });
 
   const totalConsumed = waterEntries.reduce(
     (sum, entry) => sum + entry.amount,
@@ -52,18 +54,19 @@ export const getDailyWaterData = async (userId) => {
 
   const dailyGoal = user.dailyGoal;
   const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
-  const dailyGoalLiters = (dailyGoal / 1000).toFixed(1) + "L";
+  const dailyGoalDay = (dailyGoal / 1000).toFixed(1) + "L";
   
   return {
-    dailyGoalLiters: dailyGoalLiters,
+    dailyGoal: dailyGoalDay,
     progress: Math.min(progress, 100).toString() + "%",
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
-      time: entry.updatedAt.toISOString().slice(0, 16),
+      time: entry.time,
       amount: entry.amount,
     })),
   };
 };
+
 
 export const updateDailyGoal = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
@@ -139,7 +142,6 @@ export const getMonthlyWaterData = async (userId, month) => {
     return {
       date: day.date,
       dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      totalAmount: (day.totalAmount / 1000).toFixed(1) + ' L',
       percentage: percentage.toFixed(0) + '%',
       entriesCount: day.entriesCount,
     };
