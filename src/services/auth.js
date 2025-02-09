@@ -39,13 +39,13 @@ export const loginUser = async ({ email, password }) => {
   const user = await UserCollections.findOne({ email });
 
   if (!user) {
-    throw createHttpError(401, 'Invalid email!');
+    throw createHttpError(401, 'Invalid email or password!');
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
 
   if (!passwordCompare) {
-    throw createHttpError(401, 'Invalid password!');
+    throw createHttpError(401, 'Invalid email or password!');
   }
 
   await SessionCollections.deleteOne({ userId: user._id });
