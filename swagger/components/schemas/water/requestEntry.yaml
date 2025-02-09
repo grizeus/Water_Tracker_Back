@@ -6,5 +6,5 @@ properties:
     example: '2025-02-05T12:33'
   amount:
     type: string
-    example: '500'
+    example: 500
 
