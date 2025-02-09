@@ -38,10 +38,6 @@ responses:
                   type: string
                   format: email
                   example: user@example.com
-                name:
-                  type: string
-                  example: Jon Voles
-                  description: Optional user name (e.g., "Jon Voles")
   '400':
     $ref: '../../components/responses/400.yaml'
   '500':

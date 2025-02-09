@@ -41,7 +41,7 @@ cd water-tracker-api
 npm install
 
 3️⃣ Set Up Environment Variables
-Create a .env file in the root folder and add:
+Create a .env file in the root folder and add: 
 PORT=3000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret

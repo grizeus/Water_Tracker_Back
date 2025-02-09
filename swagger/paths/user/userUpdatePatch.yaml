@@ -32,16 +32,20 @@ requestBody:
           avatarURL:
             description: "Link to user's avatar"
             type: string
-            format: binary
+            format: url
             example: 'https://res.cloudinary.com/photo/image.png'
           oldPassword:
-            description: "Old user's password"
             type: string
-            example: '********'
+            format: password
+            minLength: 8
+            maxLength: 64
+            example: 'Verystrongpassword1'
           newPassword:
-            description: "New user's password"
             type: string
-            example: '********'
+            format: password
+            minLength: 8
+            maxLength: 64
+            example: 'Verystrongpassword1'
 responses:
   '200':
     description: User successfully updated

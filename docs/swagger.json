@@ -80,11 +80,6 @@
                           "type": "string",
                           "format": "email",
                           "example": "user@example.com"
-                        },
-                        "name": {
-                          "type": "string",
-                          "example": "Jon Voles",
-                          "description": "Optional user name (e.g., \"Jon Voles\")"
                         }
                       }
                     }
@@ -384,18 +379,22 @@
                   "avatarURL": {
                     "description": "Link to user's avatar",
                     "type": "string",
-                    "format": "binary",
+                    "format": "url",
                     "example": "https://res.cloudinary.com/photo/image.png"
                   },
                   "oldPassword": {
-                    "description": "Old user's password",
                     "type": "string",
-                    "example": "********"
+                    "format": "password",
+                    "minLength": 8,
+                    "maxLength": 64,
+                    "example": "Verystrongpassword1"
                   },
                   "newPassword": {
-                    "description": "New user's password",
                     "type": "string",
-                    "example": "********"
+                    "format": "password",
+                    "minLength": 8,
+                    "maxLength": 64,
+                    "example": "Verystrongpassword1"
                   }
                 }
               }
