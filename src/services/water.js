@@ -102,45 +102,46 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
 
 
 export const getMonthlyWaterData = async (userId, month) => {
-  if (!userId) {
-    throw new Error('User not found.');
-  }
-
   const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
   const endOfMonth = new Date(startOfMonth);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
   const waterEntries = await WaterCollection.find({
     userId: userId,
-    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+    time: { $regex: `^${month}` },
   }).lean();
 
-  const dailyStats = {};
+  if (!userId) {
+    throw new Error('User not found.');
+  }
 
-  waterEntries.forEach((entry) => {
-    const dateKey = entry.time.split('T')[0];
+  const dailyData = waterEntries.reduce((acc, entry) => {
+    const date = entry.time.split('T')[0];
     
-    if (!dailyStats[dateKey]) {
-      dailyStats[dateKey] = {
-        date: dateKey,
+    if (!acc[date]) {
+      acc[date] = {
+        date: date,
         totalAmount: 0,
         entriesCount: 0,
         dailyGoal: entry.dailyGoal || 2000,
       };
     }
-    
-    dailyStats[dateKey].totalAmount += entry.amount;
-    dailyStats[dateKey].entriesCount += 1;
-  });
 
-  return Object.values(dailyStats).map((day) => {
+    acc[date].totalAmount += entry.amount;
+    acc[date].entriesCount += 1;
+    acc[date].dailyGoal = entry.dailyGoal; 
+    
+    return acc;
+  }, {});
+
+  return Object.values(dailyData).map((day) => {
     let percentage = (day.totalAmount / day.dailyGoal) * 100;
     if (percentage > 100) {
       percentage = 100;
     }
 
     return {
-      date: day.date,
+      date: day.date.slice(0,9),
       dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
       percentage: percentage.toFixed(0) + '%',
       entriesCount: day.entriesCount,
