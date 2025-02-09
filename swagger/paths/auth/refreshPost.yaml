@@ -12,7 +12,5 @@ responses:
     $ref: '../../components/responses/400.yaml'
   '401':
     $ref: '../../components/responses/401.yaml'
-  '404':
-    $ref: '../../components/responses/401.yaml'
   '500':
     $ref: '../../components/responses/500.yaml'

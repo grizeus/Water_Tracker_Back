@@ -10,4 +10,3 @@ properties:
   password:
     type: string
     format: password
-    example: '********'
