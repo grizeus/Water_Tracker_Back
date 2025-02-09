@@ -72,6 +72,10 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "65ca67e7ae7f10c88b598384"
+                        },
                         "email": {
                           "type": "string",
                           "format": "email",
@@ -155,8 +159,42 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "404": {
-            "$ref": "#/components/responses/401"
+          "401": {
+            "description": "Unauthorized error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "UnauthorizedError"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "message"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Invalid email or password"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -216,9 +254,6 @@
           "401": {
             "$ref": "#/components/responses/401"
           },
-          "404": {
-            "$ref": "#/components/responses/401"
-          },
           "500": {
             "$ref": "#/components/responses/500"
           }
@@ -275,7 +310,28 @@
             "$ref": "#/components/responses/401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found!"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -383,7 +439,28 @@
             "$ref": "#/components/responses/401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found!"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -836,11 +913,9 @@
           "password": {
             "type": "string",
             "format": "password",
-            "example": "********"
-          },
-          "name": {
-            "type": "string",
-            "description": "Optional user name 'Jon Voles'"
+            "minLength": 8,
+            "maxLength": 64,
+            "example": "Verystrongpassword1"
           }
         }
       },
@@ -859,7 +934,9 @@
           "password": {
             "type": "string",
             "format": "password",
-            "example": "********"
+            "minLength": 8,
+            "maxLength": 64,
+            "example": "Verystrongpassword1"
           }
         }
       },
@@ -1071,7 +1148,7 @@
                 },
                 "message": {
                   "type": "string",
-                  "example": "{url} not found!"
+                  "example": "Request not found!"
                 }
               }
             }

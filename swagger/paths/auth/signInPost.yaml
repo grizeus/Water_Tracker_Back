@@ -36,7 +36,30 @@ responses:
                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   '400':
     $ref: '../../components/responses/400.yaml'
-  '404':
-    $ref: '../../components/responses/401.yaml'
+  '401':
+    description: Unauthorized error
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: UnauthorizedError
+            data:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: 'Invalid email or password'
   '500':
     $ref: '../../components/responses/500.yaml'
