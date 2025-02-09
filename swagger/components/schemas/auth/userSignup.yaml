@@ -11,6 +11,3 @@ properties:
     type: string
     format: password
     example: '********'
-  name:
-    type: string
-    description: Optional user name 'Jon Voles'
