@@ -71,7 +71,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
   
   const endOfMonth = new Date(startOfMonth);
-  endOfMonth.setMonth(endOfMonth.getMonth() + 1); // Додаємо 1 місяць до стартової дати
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
   const waterEntries = await WaterCollection.find({
     userId: userId,
