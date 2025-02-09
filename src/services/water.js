@@ -141,7 +141,7 @@ export const getMonthlyWaterData = async (userId, month) => {
     }
 
     return {
-      date: day.date.slice(0,9),
+      date: day.date.slice(0,10),
       dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
       percentage: percentage.toFixed(0) + '%',
       entriesCount: day.entriesCount,
