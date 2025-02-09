@@ -32,13 +32,15 @@ export const deleteWaterEntry = async (id, userId) => {
 
 export const getDailyWaterData = async (userId) => {
   const today = new Date();
-  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateString = `${year}-${month}-${day}`;
 
   const waterEntries = await WaterCollection.find({
     userId: userId,
-    createdAt: { $gte: startOfDay, $lte: endOfDay },
-  }).sort({ createdAt: -1 });
+    time: { $regex: `^${dateString}` },
+  }).sort({ time: 1 });
 
   const totalConsumed = waterEntries.reduce(
     (sum, entry) => sum + entry.amount,
@@ -52,81 +54,17 @@ export const getDailyWaterData = async (userId) => {
 
   const dailyGoal = user.dailyGoal;
   const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
-  const dailyGoalLiters = (dailyGoal / 1000).toFixed(1) + "L";
+  const dailyGoalDay = (dailyGoal / 1000).toFixed(1) + "L";
   
   return {
-    dailyGoalLiters: dailyGoalLiters,
+    dailyGoal: dailyGoalDay,
     progress: Math.min(progress, 100).toString() + "%",
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
-      time: entry.updatedAt.toISOString().slice(0, 16),
+      time: entry.time,
       amount: entry.amount,
     })),
   };
-};
-
-export const getMonthlyWaterData = async (userId, month) => {
-
-  
-  const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
-  
-  const endOfMonth = new Date(startOfMonth);
-  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-
-  const waterEntries = await WaterCollection.find({
-    userId: userId,
-    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
-  }).lean();
-
-  if (!userId) {
-    throw new Error('User not found.');
-  }
-
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}-${hours}:${minutes}`;
-  };
-
-  
-  const dailyData = waterEntries.reduce((acc, entry) => {
-    const dateObj = new Date(entry.createdAt);
-    const formattedDate = formatDate(dateObj);
-
-    
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = {
-        date: formattedDate,
-        totalAmount: 0,
-        entriesCount: 0,
-        dailyGoal: entry.dailyGoal || 2000,
-      };
-    }
-
-    
-    acc[formattedDate].totalAmount += entry.amount;
-    acc[formattedDate].entriesCount += 1;
-
-    return acc;
-  }, {});
-
-  
-  return Object.values(dailyData).map((day) => {
-    let percentage = (day.totalAmount / day.dailyGoal) * 100;
-    if (percentage > 100) {
-      percentage = 100; 
-    }
-
-    return {
-      date: day.date, 
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L', 
-      percentage: percentage.toFixed(0) + '%', 
-      entriesCount: day.entriesCount, 
-    };
-  });
 };
 
 
@@ -160,4 +98,53 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
   }
 
   return { dailyGoal: updatedUser.dailyGoal };
+};
+
+
+export const getMonthlyWaterData = async (userId, month) => {
+  const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const waterEntries = await WaterCollection.find({
+    userId: userId,
+    time: { $regex: `^${month}` },
+  }).lean();
+
+  if (!userId) {
+    throw new Error('User not found.');
+  }
+
+  const dailyData = waterEntries.reduce((acc, entry) => {
+    const date = entry.time.split('T')[0];
+    
+    if (!acc[date]) {
+      acc[date] = {
+        date: date,
+        totalAmount: 0,
+        entriesCount: 0,
+        dailyGoal: entry.dailyGoal || 2000,
+      };
+    }
+
+    acc[date].totalAmount += entry.amount;
+    acc[date].entriesCount += 1;
+    acc[date].dailyGoal = entry.dailyGoal; 
+    
+    return acc;
+  }, {});
+
+  return Object.values(dailyData).map((day) => {
+    let percentage = (day.totalAmount / day.dailyGoal) * 100;
+    if (percentage > 100) {
+      percentage = 100;
+    }
+
+    return {
+      date: day.date.slice(0,10),
+      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
+      percentage: percentage.toFixed(0) + '%',
+      entriesCount: day.entriesCount,
+    };
+  });
 };
