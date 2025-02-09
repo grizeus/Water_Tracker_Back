@@ -65,71 +65,6 @@ export const getDailyWaterData = async (userId) => {
   };
 };
 
-export const getMonthlyWaterData = async (userId, month) => {
-
-  
-  const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
-  
-  const endOfMonth = new Date(startOfMonth);
-  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-
-  const waterEntries = await WaterCollection.find({
-    userId: userId,
-    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
-  }).lean();
-
-  if (!userId) {
-    throw new Error('User not found.');
-  }
-
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}-${hours}:${minutes}`;
-  };
-
-  
-  const dailyData = waterEntries.reduce((acc, entry) => {
-    const dateObj = new Date(entry.createdAt);
-    const formattedDate = formatDate(dateObj);
-
-    
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = {
-        date: formattedDate,
-        totalAmount: 0,
-        entriesCount: 0,
-        dailyGoal: entry.dailyGoal || 2000,
-      };
-    }
-
-    
-    acc[formattedDate].totalAmount += entry.amount;
-    acc[formattedDate].entriesCount += 1;
-
-    return acc;
-  }, {});
-
-  
-  return Object.values(dailyData).map((day) => {
-    let percentage = (day.totalAmount / day.dailyGoal) * 100;
-    if (percentage > 100) {
-      percentage = 100; 
-    }
-
-    return {
-      date: day.date, 
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L', 
-      percentage: percentage.toFixed(0) + '%', 
-      entriesCount: day.entriesCount, 
-    };
-  });
-};
-
-
 export const updateDailyGoal = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
     throw new Error('Daily water goal cannot exceed 15000 ml.');
@@ -160,4 +95,53 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
   }
 
   return { dailyGoal: updatedUser.dailyGoal };
+};
+
+
+export const getMonthlyWaterData = async (userId, month) => {
+  if (!userId) {
+    throw new Error('User not found.');
+  }
+
+  const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const waterEntries = await WaterCollection.find({
+    userId: userId,
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+  }).lean();
+
+  const dailyStats = {};
+
+  waterEntries.forEach((entry) => {
+    const dateKey = entry.time.split('T')[0];
+    
+    if (!dailyStats[dateKey]) {
+      dailyStats[dateKey] = {
+        date: dateKey,
+        totalAmount: 0,
+        entriesCount: 0,
+        dailyGoal: entry.dailyGoal || 2000,
+      };
+    }
+    
+    dailyStats[dateKey].totalAmount += entry.amount;
+    dailyStats[dateKey].entriesCount += 1;
+  });
+
+  return Object.values(dailyStats).map((day) => {
+    let percentage = (day.totalAmount / day.dailyGoal) * 100;
+    if (percentage > 100) {
+      percentage = 100;
+    }
+
+    return {
+      date: day.date,
+      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
+      totalAmount: (day.totalAmount / 1000).toFixed(1) + ' L',
+      percentage: percentage.toFixed(0) + '%',
+      entriesCount: day.entriesCount,
+    };
+  });
 };
