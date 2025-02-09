@@ -970,7 +970,7 @@
           },
           "amount": {
             "type": "string",
-            "example": "500"
+            "example": 500
           }
         }
       },
@@ -1043,11 +1043,11 @@
       "month": {
         "type": "object",
         "properties": {
-          "formattedDate": {
+          "date": {
             "description": "Monthly statistics",
             "type": "string",
             "format": "YYYY-MM",
-            "example": "2025-01"
+            "example": "2025-02-04"
           },
           "dailyGoal": {
             "description": "The daily norm of the given day",
