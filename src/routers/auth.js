@@ -2,7 +2,8 @@ import { Router } from 'express';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
-import { authenticate } from '../middlewares/authenticate.js';
+// TODO: leave by now
+// import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
 import { authRegisterSchema, authLoginSchema } from '../validation/auth.js';
@@ -25,13 +26,11 @@ authRouter.post(
 
 authRouter.post(
   '/refresh',
-  authenticate,
   ctrlWrapper(authControllers.refreshTokenController),
 );
 
 authRouter.post(
   '/logout',
-  authenticate,
   ctrlWrapper(authControllers.logoutController),
 );
 
