@@ -115,7 +115,7 @@ export const getMonthlyWaterData = async (userId, month) => {
 
   const dailyData = waterEntries.reduce((acc, entry) => {
     const date = entry.time.split('T')[0];
-    
+
     if (!acc[date]) {
       acc[date] = {
         date: date,
@@ -127,8 +127,8 @@ export const getMonthlyWaterData = async (userId, month) => {
 
     acc[date].totalAmount += entry.amount;
     acc[date].entriesCount += 1;
-    acc[date].dailyGoal = entry.dailyGoal; 
-    
+    acc[date].dailyGoal = entry.dailyGoal;
+
     return acc;
   }, {});
 
@@ -138,8 +138,12 @@ export const getMonthlyWaterData = async (userId, month) => {
       percentage = 100;
     }
 
+    const dateObj = new Date(day.date);
+    const dayNum = dateObj.getUTCDate();
+    const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(dateObj);
+
     return {
-      date: day.date.slice(0,10),
+      date: `${dayNum},${monthName}`,
       dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
       percentage: percentage.toFixed(0) + '%',
       entriesCount: day.entriesCount,
