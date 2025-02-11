@@ -52,13 +52,11 @@ export const getDailyWaterData = async (userId) => {
     throw new Error('User not found');
   }
 
-  const dailyGoal = user.dailyGoal;
-  const progress = ((totalConsumed / dailyGoal) * 100).toFixed(0);
-  const dailyGoalDay = (dailyGoal / 1000).toFixed(1) + "L";
-  
+  const progress = ((totalConsumed / user.dailyGoal) * 100).toFixed(0);
+
   return {
-    dailyGoal: dailyGoalDay,
-    progress: Math.min(progress, 100).toString() + "%",
+    dailyGoal: user.dailyGoal,
+    progress: Math.min(progress, 100).toString() + '%',
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
       time: entry.time,

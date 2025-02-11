@@ -46,7 +46,7 @@ paths:
       $ref: '../swagger/paths/water/{id}/waterByIdDelete.yaml'
   /water/today:
     get:
-      $ref: '../swagger/paths/water/tooday.yaml'
+      $ref: '../swagger/paths/water/today.yaml'
   /water/month/{date}:
     get:
       $ref: '../swagger/paths/water/monthlyStatistics.yaml'
