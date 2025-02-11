@@ -22,12 +22,18 @@ const createSessionData = () => ({
 export const registerUser = async (payload) => {
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
-  await UserCollections.create({
+  const user = await UserCollections.create({
     ...payload,
     password: encryptedPassword,
   });
 
-  return { message: 'Successfully signed up a user!' };
+  const sessionData = createSessionData();
+
+  return SessionCollections.create({
+    userId: user._id,
+    ...sessionData,
+  });
+
 };
 
 export const loginUser = async ({ email, password }) => {
