@@ -3,8 +3,7 @@ properties:
   date:
     description: 'Monthly statistics'
     type: string
-    format: 'YYYY-MM'
-    example: '2025-02-04'
+    example: '10,February'
   dailyGoal:
     description: 'The daily norm of the given day'
     type: string
