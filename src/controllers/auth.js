@@ -1,11 +1,6 @@
 import createHttpError from 'http-errors';
 
-import {
-  registerUser,
-  loginUser,
-  refresh,
-  logout,
-} from '../services/auth.js';
+import { registerUser, loginUser, refresh, logout } from '../services/auth.js';
 
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
@@ -26,7 +21,6 @@ export const registerController = async (req, res) => {
     throw createHttpError(400, 'The request cannot be processed.');
   }
 
-  
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
@@ -38,6 +32,7 @@ export const loginController = async (req, res) => {
   const session = await loginUser(req.body);
 
   setupSession(res, session);
+
   if (!session) {
     throw createHttpError(400, 'The request cannot be processed.');
   }
