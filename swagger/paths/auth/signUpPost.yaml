@@ -27,7 +27,11 @@ responses:
               example: 201
             message:
               type: string
-              example: Successfully signed up a user!
+              example: Successfully registered a user!
+            data:
+              accessToken:
+                description: "Random string in the base64 encoding"
+                type: string
   '400':
     $ref: '../../components/responses/400.yaml'
   '500':

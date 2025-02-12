@@ -67,7 +67,13 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully signed up a user!"
+                      "example": "Successfully registered a user!"
+                    },
+                    "data": {
+                      "accessToken": {
+                        "description": "Random string in the base64 encoding",
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -730,7 +736,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully The data is back!"
+                      "example": "Today data successfully found!"
                     },
                     "data": {
                       "$ref": "#/components/schemas/today"
@@ -1053,8 +1059,7 @@
           "date": {
             "description": "Monthly statistics",
             "type": "string",
-            "format": "YYYY-MM",
-            "example": "2025-02-04"
+            "example": "10,February"
           },
           "dailyGoal": {
             "description": "The daily norm of the given day",

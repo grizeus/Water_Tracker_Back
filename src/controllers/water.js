@@ -68,7 +68,6 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
     if (!result) {
       throw createHttpError(404, 'The request cannot be processed.');
     }
-  
 
     res.status(200).json({
       status: 200,
@@ -81,38 +80,34 @@ export const getMonthlyWaterDataController = async (req, res, next) => {
 };
 
 export const getDailyWaterDataController = async (req, res, next) => {
-    const userId = req.user._id;
+  const userId = req.user._id;
 
-    const result = await getDailyWaterData(userId);
+  const result = await getDailyWaterData(userId);
 
-    if (!result) {
-      throw createHttpError(404,
-        'The request cannot be processed.'
-      );
-    }
+  if (!result) {
+    throw createHttpError(404, 'The request cannot be processed.');
+  }
 
-    res.status(200).json({
-      status: 200,
-      data: result,
-      message: 'Successfully, today date found.',
-    });
+  res.status(200).json({
+    status: 200,
+    data: result,
+    message: 'Today data successfully found!',
+  });
 };
 
 export const updateDailyWaterController = async (req, res) => {
-    const userId = req.user._id;
-    const { dailyGoal } = req.body;
+  const userId = req.user._id;
+  const { dailyGoal } = req.body;
 
-    if (!dailyGoal) {
-      throw createHttpError(400,
-        'The request cannot be processed.'
-      );
-    }
+  if (!dailyGoal) {
+    throw createHttpError(400, 'The request cannot be processed.');
+  }
 
-    const result = await updateDailyGoal(userId, dailyGoal);
+  const result = await updateDailyGoal(userId, dailyGoal);
 
-    res.status(200).json({
-      status: 200,
-      message: 'Daily water goal updated successfully.',
-      data: result.dailyGoal,
-    });
+  res.status(200).json({
+    status: 200,
+    message: 'Daily water goal updated successfully.',
+    data: result.dailyGoal,
+  });
 };

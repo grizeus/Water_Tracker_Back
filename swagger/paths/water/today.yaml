@@ -22,7 +22,7 @@ responses:
               example: 200
             message:
               type: string
-              example: Successfully The data is back!
+              example: Today data successfully found!
             data:
               $ref: "../../components/schemas/water/today.yaml"
   '400':
