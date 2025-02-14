@@ -68,6 +68,15 @@
                     "message": {
                       "type": "string",
                       "example": "Successfully signed up a user!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                      }
                     }
                   }
                 }
@@ -1053,8 +1062,7 @@
           "date": {
             "description": "Monthly statistics",
             "type": "string",
-            "format": "YYYY-MM",
-            "example": "2025-02-04"
+            "example": "10,February"
           },
           "dailyGoal": {
             "description": "The daily norm of the given day",
