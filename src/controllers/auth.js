@@ -15,16 +15,16 @@ const setupSession = (res, session) => {
 };
 
 export const registerController = async (req, res) => {
-  const user = await registerUser(req.body);
+  const { accessToken } = await registerUser(req.body);
 
-  if (!user) {
+  if (!accessToken) {
     throw createHttpError(400, 'The request cannot be processed.');
   }
 
   res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
-    data: user,
+    accessToken,
   });
 };
 
