@@ -28,6 +28,12 @@ responses:
             message:
               type: string
               example: Successfully signed up a user!
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   '400':
     $ref: '../../components/responses/400.yaml'
   '500':
