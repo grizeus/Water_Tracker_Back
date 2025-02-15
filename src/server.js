@@ -18,31 +18,31 @@ export const setupServer = () => {
 
   // код для заміни який буде використано після деплою і запуску фронта
 
-  //  const allowedOrigins = ['http://localhost:3000', 'https://myfrontend.com'];
+   const allowedOrigins = ['https://water-tracker-frontend-7q65.vercel.app'];
 
-  //  app.use(
-  //    cors({
-  //      origin: function (origin, callback) {
-  //        if (!origin || allowedOrigins.includes(origin)) {
-  //          callback(null, true);
-  //        } else {
-  //          callback(new Error('Not allowed by CORS'));
-  //        }
-  //      },
-  //      credentials: true,
-  //    }),
-  //  );
+   app.use(
+     cors({
+       origin: function (origin, callback) {
+         if (!origin || allowedOrigins.includes(origin)) {
+           callback(null, true);
+         } else {
+           callback(new Error('Not allowed by CORS'));
+         }
+       },
+       credentials: true,
+     }),
+   );
 
   // код який дозволяє усі корси, запити з усіх серверів
 
-  app.use(
-    cors({
-      origin: function (origin, callback) {
-        callback(null, true);
-      },
-      credentials: true,
-    }),
-  );
+  // app.use(
+  //   cors({
+  //     origin: function (origin, callback) {
+  //       callback(null, true);
+  //     },
+  //     credentials: true,
+  //   }),
+  // );
   app.use(express.json());
   app.use(express.static('uploads'));
   app.use(cookieParser());
