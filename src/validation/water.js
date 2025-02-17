@@ -16,7 +16,7 @@ export const waterEntrySchema = Joi.object({
 });
 
 export const dailyGoalSchema = Joi.object({
-  dailyGoal: Joi.number().integer().min(50).max(15000).messages({
+  dailyGoal: Joi.number().integer().min(500).max(15000).messages({
     'number.base': 'Daily goal must be a number.',
     'number.min': 'Daily goal must be at least 50.',
     'number.max': 'Daily goal must be no more than 15000.',

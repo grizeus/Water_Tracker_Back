@@ -16,9 +16,7 @@ import { swaggerDocs } from './middlewares/swaggerDocs.js';
 export const setupServer = () => {
   const app = express();
 
-  // код для заміни який буде використано після деплою і запуску фронта
-
-   const allowedOrigins = ['https://water-tracker-frontend-7q65.vercel.app'];
+   const allowedOrigins = ['https://water-tracker-frontend-7q65.vercel.app', 'http://localhost:5173', 'http://localhost:4173'];
 
    app.use(
      cors({
@@ -33,16 +31,6 @@ export const setupServer = () => {
      }),
    );
 
-  // код який дозволяє усі корси, запити з усіх серверів
-
-  // app.use(
-  //   cors({
-  //     origin: function (origin, callback) {
-  //       callback(null, true);
-  //     },
-  //     credentials: true,
-  //   }),
-  // );
   app.use(express.json());
   app.use(express.static('uploads'));
   app.use(cookieParser());
