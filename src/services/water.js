@@ -1,14 +1,13 @@
-import WaterCollection from '../db/models/Water.js';
-import UserCollections from '../db/models/User.js';
+import WaterCollection from "../db/models/Water.js";
+import UserCollections from "../db/models/User.js";
 
 export const addWaterEntry = async (payload) => {
   const { userId } = payload;
   const user = await UserCollections.findById(userId);
   const dailyGoal = user.dailyGoal;
 
-  const newEntry = await WaterCollection.create({ dailyGoal, ...payload });
+  return await WaterCollection.create({ dailyGoal, ...payload });
 
-  return newEntry;
 };
 
 export const updateWaterEntry = async (id, payload, userId) => {
@@ -33,8 +32,8 @@ export const deleteWaterEntry = async (id, userId) => {
 export const getDailyWaterData = async (userId) => {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   const dateString = `${year}-${month}-${day}`;
 
   const waterEntries = await WaterCollection.find({
@@ -49,14 +48,14 @@ export const getDailyWaterData = async (userId) => {
 
   const user = await UserCollections.findById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   const progress = ((totalConsumed / user.dailyGoal) * 100).toFixed(0);
 
   return {
     dailyGoal: user.dailyGoal,
-    progress: Math.min(progress, 100).toString() + '%',
+    progress: Math.min(progress, 100).toString() + "%",
     entries: waterEntries.map((entry) => ({
       _id: entry._id,
       time: entry.time,
@@ -68,7 +67,7 @@ export const getDailyWaterData = async (userId) => {
 
 export const updateDailyGoal = async (userId, dailyGoal) => {
   if (dailyGoal > 15000) {
-    throw new Error('Daily water goal cannot exceed 15000 ml.');
+    throw new Error("Daily water goal cannot exceed 15000 ml.");
   }
 
   const updatedUser = await UserCollections.findByIdAndUpdate(
@@ -78,10 +77,10 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
   );
 
   if (!updatedUser) {
-    throw new Error('User not found.');
+    throw new Error("User not found.");
   }
 
-  const currentDay = new Date(Date.now()).toISOString().split('T')[0];
+  const currentDay = new Date(Date.now()).toISOString().split("T")[0];
 
   const entries = await WaterCollection.find({ userId, time: { $regex: `^${currentDay}` } });
   if (entries.length !== 0) {
@@ -89,9 +88,9 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
       { userId, time: { $regex: `^${currentDay}` } },
       { $set: { dailyGoal: dailyGoal } },
     );
- 
+
     if (updatedEntries.matchedCount !== updatedEntries.modifiedCount) {
-      throw new Error('Not every entry was updated');
+      throw new Error("Not every entry was updated");
     }
   }
 
@@ -110,11 +109,11 @@ export const getMonthlyWaterData = async (userId, month) => {
   }).lean();
 
   if (!userId) {
-    throw new Error('User not found.');
+    throw new Error("User not found.");
   }
 
   const dailyData = waterEntries.reduce((acc, entry) => {
-    const date = entry.time.split('T')[0];
+    const date = entry.time.split("T")[0];
 
     if (!acc[date]) {
       acc[date] = {
@@ -140,12 +139,12 @@ export const getMonthlyWaterData = async (userId, month) => {
 
     const dateObj = new Date(day.date);
     const dayNum = dateObj.getUTCDate();
-    const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(dateObj);
+    const monthName = new Intl.DateTimeFormat("en-US", { month: "long" }).format(dateObj);
 
     return {
       date: `${dayNum},${monthName}`,
-      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + ' L',
-      percentage: percentage.toFixed(0) + '%',
+      dailyGoal: (day.dailyGoal / 1000).toFixed(1) + " L",
+      percentage: percentage.toFixed(0) + "%",
       entriesCount: day.entriesCount,
     };
   });

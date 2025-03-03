@@ -2,8 +2,6 @@ import { Router } from 'express';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
-// TODO: leave by now
-// import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
 import { authRegisterSchema, authLoginSchema } from '../validation/auth.js';
