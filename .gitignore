@@ -5,7 +5,3 @@
 .vscode
 .DS_Store
 .idea
-
-
-# files for saving request pools
-pullrequests-list.txt

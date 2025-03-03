@@ -1,11 +1,12 @@
 import bcrypt from 'bcrypt';
+import createHttpError from 'http-errors';
 
 import UserCollections from '../db/models/User.js';
 
 export const getUserById = async (userId) => UserCollections.findById(userId);
 
 export const updateUser = async (userId, updatedData) => {
-  const user = await UserCollections.findOne({ _id: userId }); 
+  const user = await UserCollections.findOne({ _id: userId });
   if (!user) {
     throw new Error('User not found');
   }
@@ -13,7 +14,7 @@ export const updateUser = async (userId, updatedData) => {
   if (updatedData.oldPassword && updatedData.newPassword) {
     const isMatch = await bcrypt.compare(updatedData.oldPassword, user.password);
     if (!isMatch) {
-      throw new Error('Old password is incorrect');
+      throw createHttpError(401, 'Old password is incorrect');
     }
 
     const salt = await bcrypt.genSalt(10);
