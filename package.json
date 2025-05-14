@@ -10,7 +10,9 @@
     "start": "node /src/index.js",
     "build": "npm run build-docs",
     "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
-    "preview-docs": "redocly preview-docs"
+    "preview-docs": "redocly preview-docs",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -36,7 +38,9 @@
     "@redocly/cli": "^1.28.1",
     "eslint": "^9.19.0",
     "globals": "^15.14.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "vitest": "^3.1.3"
   }
 }

@@ -12,7 +12,7 @@ import {
   refreshTokenLifeTime,
 } from '../constants/auth.js';
 
-const createSessionData = () => ({
+export const createSessionData = () => ({
   accessToken: randomBytes(35).toString('base64'),
   refreshToken: randomBytes(35).toString('base64'),
   accessTokenValidUntil: Date.now() + accessTokenLifeTime,
@@ -78,7 +78,7 @@ export const refresh = async ({ sessionId, refreshToken }) => {
 
   const newSession = createSessionData();
 
-   await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
+  await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
 
   return await SessionCollections.create({
     userId: session.userId,
