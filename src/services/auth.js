@@ -60,6 +60,10 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const refresh = async ({ sessionId, refreshToken }) => {
+  if (sessionId == null || refreshToken == null) {
+    throw createHttpError(400, 'Bad Request: Session ID or/and refresh token are invalid!');
+  }
+
   const session = await SessionCollections.findOne({
     _id: sessionId,
     refreshToken,
