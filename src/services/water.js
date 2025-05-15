@@ -39,7 +39,10 @@ export const getDailyWaterData = async (userId) => {
   const waterEntries = await WaterCollection.find({
     userId: userId,
     time: { $regex: `^${dateString}` },
+  // });
   }).sort({ time: 1 });
+
+  console.log(waterEntries);
 
   const totalConsumed = waterEntries.reduce(
     (sum, entry) => sum + entry.amount,
@@ -106,6 +109,7 @@ export const getMonthlyWaterData = async (userId, month) => {
   const waterEntries = await WaterCollection.find({
     userId: userId,
     time: { $regex: `^${month}` },
+  // });
   }).lean();
 
   if (!userId) {

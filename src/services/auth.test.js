@@ -1,4 +1,4 @@
-import { createSessionData, registerUser, loginUser, refresh } from './auth';
+import { createSessionData, registerUser, loginUser, refresh, logout } from './auth';
 import UserCollections from '../db/models/User.js';
 import SessionCollections from '../db/models/Session.js';
 import mongoose from 'mongoose';
@@ -74,6 +74,14 @@ it('loginUser returns user data if credentials are correct', async () => {
   expect(mockLoginUser.refreshToken).toHaveLength(48);
   expect(typeof mockLoginUser.accessToken).toBe('string');
   expect(typeof mockLoginUser.refreshToken).toBe('string');
+});
+
+it('loginUser throws error for non-existent user', async () => {
+  UserCollections.findOne.mockResolvedValue(null);
+
+  await expect(
+    loginUser({ email: 'nonexistent@example.com', password: 'anypassword' }),
+  ).rejects.toThrow('Invalid email or password!');
 });
 
 it('loginUser throws error for invalid credentials', async () => {
@@ -170,4 +178,12 @@ it('refresh function throws error when both sessionId and refreshToken are null'
     sessionId: null,
     refreshToken: null
   })).rejects.toThrow('Bad Request: Session ID or/and refresh token are invalid!');
+});
+
+it('should logout user', async () => {
+  const mockSessionId = new mongoose.Types.ObjectId();
+
+  await logout(mockSessionId);
+
+  expect(SessionCollections.deleteOne).toHaveBeenCalledWith({ _id: mockSessionId });
 });
