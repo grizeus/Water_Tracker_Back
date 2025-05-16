@@ -161,6 +161,24 @@ describe('Auth Controller', () => {
 
       await expect(refreshTokenController(req, res, next)).rejects.toThrow(error);
     });
+
+    it('should handle session absence', async () => {
+      authService.refresh.mockResolvedValue(null);
+      req.cookies = { sessionId: 'invalid-session' };
+
+      await expect(refreshTokenController(req, res, next)).rejects.toThrow(
+        'The request cannot be processed.',
+      );
+    });
+
+    it('should handle refresh token absence', async () => {
+      authService.refresh.mockResolvedValue(null);
+      req.cookies = { sessionId: 'valid-session-id' };
+
+      await expect(refreshTokenController(req, res, next)).rejects.toThrow(
+        'The request cannot be processed.',
+      );
+    });
   });
 
   describe('logoutController', () => {

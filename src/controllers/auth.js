@@ -32,7 +32,7 @@ export const registerController = async (req, res) => {
 
 export const loginController = async (req, res) => {
   const session = await loginUser(req.body);
-  
+
   if (!session) {
     throw createHttpError(400, 'The request cannot be processed.');
   }
@@ -54,10 +54,11 @@ export const refreshTokenController = async (req, res) => {
     refreshToken: req.cookies.refreshToken,
   });
 
-  setupSession(res, session);
   if (!session) {
     throw createHttpError(400, 'The request cannot be processed.');
   }
+
+  setupSession(res, session);
 
   res.json({
     status: 200,
