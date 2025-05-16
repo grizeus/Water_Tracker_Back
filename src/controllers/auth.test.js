@@ -53,6 +53,15 @@ describe('Auth Controller', () => {
 
       await expect(registerController(req, res, next)).rejects.toThrow(error);
     });
+
+    it('should handle access token absence', async () => {
+      authService.registerUser.mockResolvedValue({ accessToken: null });
+      req.body = { email: 'test@example.com', password: 'password' };
+
+      await expect(registerController(req, res, next)).rejects.toThrow(
+        'The request cannot be processed.',
+      );
+    });
   });
 
   describe('loginController', () => {
@@ -94,6 +103,15 @@ describe('Auth Controller', () => {
       req.body = { email: 'test@example.com', password: 'wrong-password' };
 
       await expect(loginController(req, res, next)).rejects.toThrow(error);
+    });
+
+    it('should handle session absence', async () => {
+      authService.loginUser.mockResolvedValue(null);
+      req.body = { email: 'test@example.com', password: 'password' };
+
+      await expect(loginController(req, res, next)).rejects.toThrow(
+        'The request cannot be processed.',
+      );
     });
   });
 
