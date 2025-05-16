@@ -11,30 +11,18 @@ import {
 import WaterCollection from '../db/models/Water.js';
 import UserCollections from '../db/models/User.js';
 
-// Mock the collections
-// vi.mock('../db/models/Water.js', () => {
-//   const mock = {
-//     map: vi.fn().mockReturnThis(),
-//     create: vi.fn().mockReturnThis(),
-//     findOneAndUpdate: vi.fn().mockReturnThis(),
-//     findOneAndDelete: vi.fn().mockReturnThis(),
-//     find: vi.fn().mockReturnThis(),
-//     updateMany: vi.fn().mockReturnThis(),
-//     sort: vi.fn().mockReturnThis(),
-//     lean: vi.fn().mockReturnThis(),
-//     reduce: vi.fn().mockReturnThis(),
-//     exec: vi.fn().mockResolvedValue([]),
-//   };
-
-//   mock.find.mockImplementation(() => mock);
-//   mock.sort.mockImplementation(() => mock);
-//   mock.lean.mockImplementation(() => mock);
-
-//   return {
-//     default: mock,
-//   };
-// });
-vi.mock('../db/models/Water.js');
+// Mock the collections with proper chaining methods
+vi.mock('../db/models/Water.js', () => {
+  return {
+    default: {
+      create: vi.fn(),
+      findOneAndUpdate: vi.fn(),
+      findOneAndDelete: vi.fn(),
+      find: vi.fn(),
+      updateMany: vi.fn(),
+    }
+  };
+});
 vi.mock('../db/models/User.js');
 
 beforeEach(() => {
@@ -138,11 +126,9 @@ describe('getDailyWaterData', () => {
       },
     ];
 
-
-    WaterCollection.find.mockReturnValueOnce(WaterCollection);
-    WaterCollection.sort.mockReturnValueOnce(WaterCollection);
-    WaterCollection.exec.mockResolvedValueOnce(mockWaterEntries);
-
+    // Mock the sort method to return the entries
+    const mockSort = { sort: vi.fn().mockReturnValue(mockWaterEntries) };
+    WaterCollection.find.mockReturnValue(mockSort);
     UserCollections.findById.mockResolvedValue(mockUser);
 
     const result = await getDailyWaterData(mockUserId);
@@ -161,23 +147,30 @@ describe('getDailyWaterData', () => {
   it('should throw error when user is not found', async () => {
     const mockUserId = new mongoose.Types.ObjectId();
 
+    // Mock the sort method to return the entries
+    const mockSort = { sort: vi.fn().mockReturnValue([]) };
+    WaterCollection.find.mockReturnValue(mockSort);
     UserCollections.findById.mockResolvedValue(null);
 
     await expect(getDailyWaterData(mockUserId)).rejects.toThrow(
-      'User not found',
+      'User not found'
     );
   });
 });
 
 describe('updateDailyGoal', () => {
-  it('should update daily goal for a user', async () => {
-    const mockUserId = new mongoose.Types.ObjectId();
-    const newDailyGoal = 3000;
-    const mockUser = {
-      _id: mockUserId,
-      dailyGoal: newDailyGoal,
-    };
+  const mockUserId = new mongoose.Types.ObjectId();
+  const newDailyGoal = 3000;
+  const mockUser = {
+    _id: mockUserId,
+    dailyGoal: newDailyGoal,
+  };
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should update daily goal for a user', async () => {
     UserCollections.findByIdAndUpdate.mockResolvedValue(mockUser);
     WaterCollection.find.mockResolvedValue([{ userId: mockUserId }]);
     WaterCollection.updateMany.mockResolvedValue({
@@ -187,33 +180,82 @@ describe('updateDailyGoal', () => {
 
     const result = await updateDailyGoal(mockUserId, newDailyGoal);
 
+    expect(UserCollections.findByIdAndUpdate).toHaveBeenCalledWith(
+      mockUserId,
+      { dailyGoal: newDailyGoal },
+      { new: true }
+    );
+    expect(WaterCollection.find).toHaveBeenCalledWith({
+      userId: mockUserId,
+      time: expect.any(Object)
+    });
+    expect(WaterCollection.updateMany).toHaveBeenCalled();
     expect(result).toEqual({ dailyGoal: newDailyGoal });
   });
 
-  it('should throw error when daily goal exceeds 15000 ml', async () => {
-    const mockUserId = new mongoose.Types.ObjectId();
+  it('should handle case with no entries for current day', async () => {
+    UserCollections.findByIdAndUpdate.mockResolvedValue(mockUser);
+    WaterCollection.find.mockResolvedValue([]);
 
+    const result = await updateDailyGoal(mockUserId, newDailyGoal);
+
+    expect(WaterCollection.updateMany).not.toHaveBeenCalled();
+    expect(result).toEqual({ dailyGoal: newDailyGoal });
+  });
+
+  it('should throw error when update fails for some entries', async () => {
+    UserCollections.findByIdAndUpdate.mockResolvedValue(mockUser);
+    WaterCollection.find.mockResolvedValue([{ userId: mockUserId }]);
+    WaterCollection.updateMany.mockResolvedValue({
+      matchedCount: 2,
+      modifiedCount: 1,
+    });
+
+    await expect(updateDailyGoal(mockUserId, newDailyGoal)).rejects.toThrow(
+      'Not every entry was updated'
+    );
+  });
+
+  it('should throw error when daily goal exceeds 15000 ml', async () => {
     await expect(updateDailyGoal(mockUserId, 16000)).rejects.toThrow(
-      'Daily water goal cannot exceed 15000 ml.',
+      'Daily water goal cannot exceed 15000 ml.'
     );
   });
 
   it('should throw error when user is not found', async () => {
-    const mockUserId = new mongoose.Types.ObjectId();
-
     UserCollections.findByIdAndUpdate.mockResolvedValue(null);
 
     await expect(updateDailyGoal(mockUserId, 3000)).rejects.toThrow(
-      'User not found.',
+      'User not found.'
     );
+  });
+
+  it('should handle zero as daily goal', async () => {
+    UserCollections.findByIdAndUpdate.mockResolvedValue({
+      ...mockUser,
+      dailyGoal: 0
+    });
+    WaterCollection.find.mockResolvedValue([]);
+
+    const result = await updateDailyGoal(mockUserId, 0);
+
+    expect(result).toEqual({ dailyGoal: 0 });
   });
 });
 
 describe('getMonthlyWaterData', () => {
-  it('should return monthly water data for a user', async () => {
-    const mockUserId = new mongoose.Types.ObjectId();
-    const month = '2023-05';
+  const mockUserId = new mongoose.Types.ObjectId();
+  const month = '2023-05';
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const createMockLean = (entries) => ({
+    lean: vi.fn().mockReturnValue(entries)
+  });
+
+  it('should return monthly water data for a user', async () => {
     const mockWaterEntries = [
       {
         _id: new mongoose.Types.ObjectId(),
@@ -229,27 +271,104 @@ describe('getMonthlyWaterData', () => {
       },
     ];
 
-    WaterCollection.find.mockResolvedValue(mockWaterEntries);
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
 
     const result = await getMonthlyWaterData(mockUserId, month);
 
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          date: expect.any(String),
-          dailyGoal: expect.any(String),
-          percentage: expect.any(String),
-          entriesCount: expect.any(Number),
-        }),
-      ]),
-    );
+    expect(WaterCollection.find).toHaveBeenCalledWith({
+      userId: mockUserId,
+      time: { $regex: `^${month}` }
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      date: '1,May',
+      dailyGoal: '2.0 L',
+      percentage: '40%',
+      entriesCount: 2
+    });
+  });
+
+  it('should handle empty month data', async () => {
+    WaterCollection.find.mockReturnValue(createMockLean([]));
+
+    const result = await getMonthlyWaterData(mockUserId, '2023-02');
+
+    expect(result).toEqual([]);
+  });
+
+  it('should handle entries with different daily goals on same day', async () => {
+    const mockWaterEntries = [
+      { amount: 500, time: '2023-05-01T10:00:00Z', dailyGoal: 2000 },
+      { amount: 300, time: '2023-05-01T14:00:00Z', dailyGoal: 1500 },
+    ];
+
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
+
+    const result = await getMonthlyWaterData(mockUserId, month);
+
+    expect(result[0].percentage).toBe('53%'); // (800/1500)*100 = 53.33% rounded
+  });
+
+  it('should cap percentage at 100%', async () => {
+    const mockWaterEntries = [
+      { amount: 2000, time: '2023-05-01T10:00:00Z', dailyGoal: 1000 },
+    ];
+
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
+
+    const result = await getMonthlyWaterData(mockUserId, month);
+
+    expect(result[0].percentage).toBe('100%');
+  });
+
+  it('should handle leap year February', async () => {
+    const mockWaterEntries = [
+      { amount: 500, time: '2024-02-29T10:00:00Z', dailyGoal: 2000 },
+    ];
+
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
+
+    const result = await getMonthlyWaterData(mockUserId, '2024-02');
+
+    expect(result[0].date).toBe('29,February');
+  });
+
+  it('should handle multiple days in month', async () => {
+    const mockWaterEntries = [
+      { amount: 500, time: '2023-05-01T10:00:00Z', dailyGoal: 2000 },
+      { amount: 300, time: '2023-05-15T14:00:00Z', dailyGoal: 2000 },
+    ];
+
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
+
+    const result = await getMonthlyWaterData(mockUserId, month);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].date).toBe('1,May');
+    expect(result[1].date).toBe('15,May');
+  });
+
+  it('should handle invalid month format', async () => {
+    await expect(
+      getMonthlyWaterData(mockUserId, 'invalid-date'),
+    ).rejects.toThrow('Invalid month format. Expected format: YYYY-MM');
   });
 
   it('should throw error when userId is not provided', async () => {
-    const month = '2023-05';
+    await expect(getMonthlyWaterData(null, month)).rejects.toThrow('User not found.');
+  });
 
-    await expect(getMonthlyWaterData(null, month)).rejects.toThrow(
-      'User not found.',
-    );
+  it('should handle zero daily goal', async () => {
+    const mockWaterEntries = [
+      { amount: 500, time: '2023-05-01T10:00:00Z', dailyGoal: 0 },
+    ];
+
+    WaterCollection.find.mockReturnValue(createMockLean(mockWaterEntries));
+
+    const result = await getMonthlyWaterData(mockUserId, month);
+
+    // Should handle division by zero and return 0% or handle it appropriately
+    expect(result[0].percentage).toBe('0%');
   });
 });
