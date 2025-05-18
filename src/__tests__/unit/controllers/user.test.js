@@ -4,12 +4,12 @@ import {
   getUserController,
   updateUserController,
   updateAvatarController,
-} from './user.js';
-import * as userService from '../services/user.js';
-import * as cloudinaryUtils from '../utils/saveFileToCloudinary.js';
+} from '../../../controllers/user.js';
+import * as userService from '../../../services/user.js';
+import * as cloudinaryUtils from '../../../utils/saveFileToCloudinary.js';
 
-vi.mock('../services/user.js');
-vi.mock('../utils/saveFileToCloudinary.js');
+vi.mock('../../../services/user.js');
+vi.mock('../../../utils/saveFileToCloudinary.js');
 
 describe('User Controller', () => {
   let req, res, next;

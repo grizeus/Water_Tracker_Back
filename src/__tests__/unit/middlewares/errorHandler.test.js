@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { errorHandler } from './errorHandler.js';
+import { errorHandler } from '../../../middlewares/errorHandler.js';
 import createHttpError from 'http-errors';
 
 describe('errorHandler Middleware', () => {

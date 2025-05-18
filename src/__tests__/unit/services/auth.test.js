@@ -1,21 +1,21 @@
-import { 
-  createSessionData, 
-  registerUser, 
-  loginUser, 
-  refresh, 
-  logout, 
-  getUser, 
-  getSession 
-} from './auth';
-import UserCollections from '../db/models/User.js';
-import SessionCollections from '../db/models/Session.js';
-import mongoose from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
+import {
+  createSessionData,
+  registerUser,
+  loginUser,
+  refresh,
+  logout,
+  getUser,
+  getSession
+} from '../../../services/auth';
+import UserCollections from '../../../db/models/User.js';
+import SessionCollections from '../../../db/models/Session.js';
 
-vi.mock('../db/models/User.js');
-vi.mock('../db/models/Session.js');
+vi.mock('../../../db/models/User.js');
+vi.mock('../../../db/models/Session.js');
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -203,30 +203,30 @@ describe('getUser', () => {
       email: 'test@example.com',
       name: 'Test User'
     };
-    
+
     UserCollections.findOne.mockResolvedValue(mockUser);
-    
+
     const filter = { email: 'test@example.com' };
     const result = await getUser(filter);
-    
+
     expect(UserCollections.findOne).toHaveBeenCalledWith(filter);
     expect(result).toEqual(mockUser);
   });
-  
+
   it('should return null when user is not found', async () => {
     UserCollections.findOne.mockResolvedValue(null);
-    
+
     const filter = { email: 'nonexistent@example.com' };
     const result = await getUser(filter);
-    
+
     expect(UserCollections.findOne).toHaveBeenCalledWith(filter);
     expect(result).toBeNull();
   });
-  
+
   it('should pass through errors from the database', async () => {
     const error = new Error('Database error');
     UserCollections.findOne.mockRejectedValue(error);
-    
+
     await expect(getUser({})).rejects.toThrow(error);
   });
 });
@@ -239,43 +239,43 @@ describe('getSession', () => {
       accessToken: 'test-access-token',
       refreshToken: 'test-refresh-token'
     };
-    
+
     SessionCollections.findOne.mockResolvedValue(mockSession);
-    
+
     const filter = { _id: mockSession._id };
     const result = await getSession(filter);
-    
+
     expect(SessionCollections.findOne).toHaveBeenCalledWith(filter);
     expect(result).toEqual(mockSession);
   });
-  
+
   it('should return null when session is not found', async () => {
     SessionCollections.findOne.mockResolvedValue(null);
-    
+
     const filter = { _id: new mongoose.Types.ObjectId() };
     const result = await getSession(filter);
-    
+
     expect(SessionCollections.findOne).toHaveBeenCalledWith(filter);
     expect(result).toBeNull();
   });
-  
+
   it('should pass through errors from the database', async () => {
     const error = new Error('Database error');
     SessionCollections.findOne.mockRejectedValue(error);
-    
+
     await expect(getSession({})).rejects.toThrow(error);
   });
-  
+
   it('should handle empty filter object', async () => {
     const mockSession = {
       _id: new mongoose.Types.ObjectId(),
       userId: new mongoose.Types.ObjectId()
     };
-    
+
     SessionCollections.findOne.mockResolvedValue(mockSession);
-    
+
     const result = await getSession({});
-    
+
     expect(SessionCollections.findOne).toHaveBeenCalledWith({});
     expect(result).toEqual(mockSession);
   });

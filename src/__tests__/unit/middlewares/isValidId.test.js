@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { isValidId } from './isValidId.js';
+import { isValidId } from '../../../middlewares/isValidId.js';
 import { isValidObjectId } from 'mongoose';
 
 // Mock mongoose's isValidObjectId

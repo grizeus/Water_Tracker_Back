@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { validateBody } from './validateBody.js';
+import { validateBody } from '../../../middlewares/validateBody.js';
 import createHttpError from 'http-errors';
 
 describe('validateBody Middleware', () => {

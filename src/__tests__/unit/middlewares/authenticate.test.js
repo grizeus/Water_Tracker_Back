@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { authenticate } from './authenticate.js';
-import * as authService from '../services/auth.js';
+import { authenticate } from '../../../middlewares/authenticate.js';
+import * as authService from '../../../services/auth.js';
 
-vi.mock('../services/auth.js');
+vi.mock('../../../services/auth.js');
 
 describe('Authentication Middleware', () => {
   let req, res, next;

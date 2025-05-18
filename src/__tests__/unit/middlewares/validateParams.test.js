@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { validateParams } from './validateParams.js';
+import { validateParams } from '../../../middlewares/validateParams.js';
 import createHttpError from 'http-errors';
 
 describe('validateParams Middleware', () => {
@@ -14,12 +14,12 @@ describe('validateParams Middleware', () => {
       json: vi.fn(),
     };
     next = vi.fn();
-    
+
     // Mock schema with validateAsync method
     schema = {
       validateAsync: vi.fn(),
     };
-    
+
     vi.clearAllMocks();
   });
 
@@ -45,7 +45,7 @@ describe('validateParams Middleware', () => {
 
     expect(schema.validateAsync).toHaveBeenCalledWith(req.params, { abortEarly: false });
     expect(next).toHaveBeenCalled();
-    
+
     const error = next.mock.calls[0][0];
     expect(error).toBeInstanceOf(createHttpError.HttpError);
     expect(error.status).toBe(400);

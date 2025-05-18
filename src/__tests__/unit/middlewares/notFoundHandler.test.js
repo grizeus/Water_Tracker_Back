@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { notFoundHandler } from './notFoundHandler.js';
+import { notFoundHandler } from '../../../middlewares/notFoundHandler.js';
 
 describe('notFoundHandler Middleware', () => {
   let req, res;
@@ -19,7 +19,7 @@ describe('notFoundHandler Middleware', () => {
 
   it('should return 404 status with correct message', () => {
     notFoundHandler(req, res);
-    
+
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
       message: '/api/non-existent-route not found',
@@ -29,9 +29,9 @@ describe('notFoundHandler Middleware', () => {
   it('should handle empty URL', () => {
     req.url = '';
     req.originalUrl = '';
-    
+
     notFoundHandler(req, res);
-    
+
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
       message: ' not found',
@@ -41,9 +41,9 @@ describe('notFoundHandler Middleware', () => {
   it('should handle root URL', () => {
     req.url = '/';
     req.originalUrl = '/';
-    
+
     notFoundHandler(req, res);
-    
+
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
       message: '/ not found',

@@ -13,14 +13,13 @@ import { logger } from './middlewares/logger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
-// Create and configure the Express app
 const createApp = () => {
   const app = express();
 
   const allowedOrigins = [
-    'https://water-tracker-frontend-7q65.vercel.app', 
-    'http://localhost:5173', 
-    'http://localhost:4173'
+    'https://water-tracker-app-eight.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:4173',
   ];
 
   // Middleware
@@ -28,7 +27,7 @@ const createApp = () => {
   app.use(express.static('uploads'));
   app.use(cookieParser());
   app.use(logger);
-  
+
   // CORS configuration
   app.use(
     cors({
@@ -60,15 +59,16 @@ const createApp = () => {
 export const setupServer = () => {
   const app = createApp();
   const port = Number(getEnvVar('PORT', 3000));
-  
+
   const server = app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
-  
+
   return { app, server };
 };
 
 // For production - only start the server if this file is run directly
-if (process.env.NODE_ENV !== 'test' && require.main === module) {
+const isRunDirectly = import.meta.url === `file://${process.argv[1]}`;
+if (process.env.NODE_ENV !== 'test' && isRunDirectly) {
   setupServer();
 }

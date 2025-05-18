@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { userInfoSchema } from './user.js';
+import { userInfoSchema } from '../../../validation/user.js';
 
 describe('User Validation', () => {
   describe('userInfoSchema', () => {

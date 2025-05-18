@@ -3,7 +3,7 @@ import {
   waterEntrySchema,
   dailyGoalSchema,
   monthFormatSchema,
-} from './water.js';
+} from '../../../validation/water.js';
 
 describe('Water Validation', () => {
   describe('waterEntrySchema', () => {

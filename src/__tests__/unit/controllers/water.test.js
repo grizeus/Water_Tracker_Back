@@ -7,10 +7,10 @@ import {
   getDailyWaterDataController,
   getMonthlyWaterDataController,
   updateDailyWaterController,
-} from './water.js';
-import * as waterService from '../services/water.js';
+} from '../../../controllers/water.js';
+import * as waterService from '../../../services/water.js';
 
-vi.mock('../services/water.js');
+vi.mock('../../../services/water.js');
 
 describe('Water Controller', () => {
   let req, res, next;
@@ -76,7 +76,7 @@ describe('Water Controller', () => {
         time: '2025-05-16T10:30:00.000Z',
         amount: 250,
       };
-      
+
       waterService.addWaterEntry.mockResolvedValue(mockWaterEntry);
       req.body = waterPayload;
 
@@ -117,7 +117,7 @@ describe('Water Controller', () => {
         ...mockWaterEntry,
         ...updatePayload,
       };
-      
+
       waterService.updateWaterEntry.mockResolvedValue(updatedEntry);
       req.params = { id: entryId };
       req.body = updatePayload;
@@ -165,7 +165,7 @@ describe('Water Controller', () => {
   describe('deleteWaterEntryController', () => {
     it('should delete water entry and return 204 status', async () => {
       const entryId = '507f1f77bcf86cd799439011';
-      
+
       waterService.deleteWaterEntry.mockResolvedValue(mockWaterEntry);
       req.params = { id: entryId };
 
@@ -235,7 +235,7 @@ describe('Water Controller', () => {
   describe('getMonthlyWaterDataController', () => {
     it('should return monthly water data with 200 status', async () => {
       const month = '2025-05';
-      
+
       waterService.getMonthlyWaterData.mockResolvedValue(mockMonthlyData);
       req.params = { month };
 
@@ -274,7 +274,7 @@ describe('Water Controller', () => {
     it('should update daily water goal and return 200 status', async () => {
       const newDailyGoal = 2500;
       const updatedData = { dailyGoal: newDailyGoal };
-      
+
       waterService.updateDailyGoal.mockResolvedValue(updatedData);
       req.body = { dailyGoal: newDailyGoal };
 

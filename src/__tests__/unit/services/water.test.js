@@ -7,12 +7,12 @@ import {
   getDailyWaterData,
   updateDailyGoal,
   getMonthlyWaterData,
-} from './water.js';
-import WaterCollection from '../db/models/Water.js';
-import UserCollections from '../db/models/User.js';
+} from '../../../services/water.js';
+import WaterCollection from '../../../db/models/Water.js';
+import UserCollections from '../../../db/models/User.js';
 
 // Mock the collections with proper chaining methods
-vi.mock('../db/models/Water.js', () => {
+vi.mock('../../../db/models/Water.js', () => {
   return {
     default: {
       create: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock('../db/models/Water.js', () => {
     }
   };
 });
-vi.mock('../db/models/User.js');
+vi.mock('../../../db/models/User.js');
 
 beforeEach(() => {
   vi.clearAllMocks();

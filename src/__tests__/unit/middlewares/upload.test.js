@@ -30,7 +30,7 @@ vi.mock('http-errors', () => ({
   },
 }));
 
-vi.mock('../constants/index.js', () => ({
+vi.mock('../../../constants/index.js', () => ({
   TEMP_UPLOADS_DIR: 'mocked_temp_uploads_dir_from_constants',
 }));
 
@@ -56,7 +56,7 @@ describe('Upload Middleware', () => {
     vi.spyOn(Math, 'random').mockReturnValue(MOCK_MATH_RANDOM);
 
     // Dynamically import the module to be tested.
-    upload = await import('./upload.js');
+    upload = await import('../../../middlewares/upload.js');
 
     // Retrieve the options captured by our mocks.
     // multer() is called once when upload.js is loaded.

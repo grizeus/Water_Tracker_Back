@@ -4,11 +4,11 @@ import {
   loginController,
   refreshTokenController,
   logoutController,
-} from './auth.js';
-import { refreshTokenLifeTime } from '../constants/auth.js';
-import * as authService from '../services/auth.js';
+} from '../../../controllers/auth.js';
+import { refreshTokenLifeTime } from '../../../constants/auth.js';
+import * as authService from '../../../services/auth.js';
 
-vi.mock('../services/auth.js');
+vi.mock('../../../services/auth.js');
 
 describe('Auth Controller', () => {
   let req, res, next;

@@ -1,10 +1,14 @@
 import { expect, it, vi, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import { getUserById, updateUser, updateAvatar } from './user.js';
-import UserCollections from '../db/models/User.js';
+import {
+  getUserById,
+  updateUser,
+  updateAvatar,
+} from '../../../services/user.js';
+import UserCollections from '../../../db/models/User.js';
 
-vi.mock('../db/models/User.js');
+vi.mock('../../../db/models/User.js');
 
 beforeEach(() => {
   vi.clearAllMocks();
