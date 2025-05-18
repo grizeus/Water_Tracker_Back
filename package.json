@@ -12,7 +12,8 @@
     "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
     "preview-docs": "redocly preview-docs",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "test:integration": "vitest run __tests__/integration"
   },
   "keywords": [],
   "author": "",
@@ -40,8 +41,10 @@
     "eslint": "^9.19.0",
     "globals": "^15.14.0",
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
     "nodemon": "^3.1.9",
     "pino-pretty": "^13.0.0",
+    "supertest": "^7.1.1",
     "vitest": "^3.1.3"
   }
 }
