@@ -8,6 +8,7 @@ export const authRegisterSchema = Joi.object({
     'string.max': 'Invalid name number of characters. Maximum is 20.',
   }),
   email: Joi.string().pattern(regularExpressionEmail).required().messages({
+    'string.pattern.base': 'Invalid email format.',
     'any.required': 'Email is required.',
   }),
   password: Joi.string().min(8).max(64).required().messages({

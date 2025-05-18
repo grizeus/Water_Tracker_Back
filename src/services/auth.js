@@ -12,7 +12,7 @@ import {
   refreshTokenLifeTime,
 } from '../constants/auth.js';
 
-const createSessionData = () => ({
+export const createSessionData = () => ({
   accessToken: randomBytes(35).toString('base64'),
   refreshToken: randomBytes(35).toString('base64'),
   accessTokenValidUntil: Date.now() + accessTokenLifeTime,
@@ -60,6 +60,10 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const refresh = async ({ sessionId, refreshToken }) => {
+  if (sessionId == null || refreshToken == null) {
+    throw createHttpError(400, 'Bad Request: Session ID or/and refresh token are invalid!');
+  }
+
   const session = await SessionCollections.findOne({
     _id: sessionId,
     refreshToken,
@@ -78,7 +82,7 @@ export const refresh = async ({ sessionId, refreshToken }) => {
 
   const newSession = createSessionData();
 
-   await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
+  await SessionCollections.deleteOne({ _id: sessionId, refreshToken });
 
   return await SessionCollections.create({
     userId: session.userId,

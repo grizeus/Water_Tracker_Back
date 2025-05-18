@@ -9,9 +9,9 @@ const api_secret = getEnvVar('CLOUDINARY_API_SECRET');
 cloudinary.config({ cloud_name, api_key, api_secret });
 
 export const saveFileToCloudinary = async (file) => {
-  const respons = await cloudinary.uploader.upload(file.path, {
+  const response = await cloudinary.uploader.upload(file.path, {
     folder: 'WaterTraсker',
   });
   await unlink(file.path);
-  return respons.secure_url;
+  return response.secure_url;
 };

@@ -99,6 +99,11 @@ export const updateDailyGoal = async (userId, dailyGoal) => {
 
 
 export const getMonthlyWaterData = async (userId, month) => {
+  // handle invalid month format
+  if (!month || !/\d{4}-\d{2}/.test(month)) {
+    throw new Error("Invalid month format. Expected format: YYYY-MM");
+  }
+
   const startOfMonth = new Date(`${month}-01T00:00:00.000Z`);
   const endOfMonth = new Date(startOfMonth);
   endOfMonth.setMonth(endOfMonth.getMonth() + 1);
@@ -132,7 +137,12 @@ export const getMonthlyWaterData = async (userId, month) => {
   }, {});
 
   return Object.values(dailyData).map((day) => {
-    let percentage = (day.totalAmount / day.dailyGoal) * 100;
+    let percentage;
+    if (day.dailyGoal > 0) {
+      percentage = (day.totalAmount / day.dailyGoal) * 100;
+    } else {
+      percentage = 0;
+    }
     if (percentage > 100) {
       percentage = 100;
     }

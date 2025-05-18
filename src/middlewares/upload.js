@@ -1,7 +1,5 @@
 import multer from 'multer';
-
 import createHttpError from 'http-errors';
-
 import { TEMP_UPLOADS_DIR } from '../constants/index.js';
 
 const storage = multer.diskStorage({
@@ -18,13 +16,33 @@ const limits = {
 };
 
 const fileFilter = (req, file, cb) => {
-  const extention = file.originalname.split('.').pop();
-  if (extention === 'exe') {
+  const splitted = file.originalname.split('.');
+  if (splitted.length === 1) {
     return cb(
-      createHttpError(400, 'A file with the extension .exe cannot be saved.'),
+      createHttpError(400, `A file without extension cannot be saved.`),
     );
   }
-  cb(null, true);
+
+  const extention = splitted.pop().toLowerCase();
+
+  switch (extention) {
+    case 'png':
+    case 'jpg':
+    case 'jpeg': {
+      return cb(null, true);
+    }
+    case 'exe':
+      return cb(
+        createHttpError(400, 'A file with the extension .exe cannot be saved.'),
+      );
+    default:
+      return cb(
+        createHttpError(
+          400,
+          `A file with the ${extention} extension cannot be saved.`,
+        ),
+      );
+  }
 };
 
 export const upload = multer({
