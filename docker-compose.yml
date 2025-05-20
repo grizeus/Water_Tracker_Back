@@ -1,0 +1,12 @@
+services:
+  watertrackerbackend:
+    image: watertrackerbackend
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3001:3001
