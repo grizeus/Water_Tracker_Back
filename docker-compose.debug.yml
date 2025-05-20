@@ -1,0 +1,12 @@
+services:
+  watertrackerbackend:
+    image: watertrackerbackend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3001:3001
+      - 9229:9229
+    command: ["bun", "--inspect=0.0.0.0:9229", "index.js"]
