@@ -1,5 +1,5 @@
 services:
-  watertrackerbackend:
+  water-back:
     image: watertrackerbackend
     build:
       context: .

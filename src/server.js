@@ -7,7 +7,6 @@ import userRouter from './routers/user.js';
 import authRouter from './routers/auth.js';
 
 import { getEnvVar } from './utils/getEnvVar.js';
-
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { logger } from './middlewares/logger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -18,44 +17,42 @@ const createApp = () => {
 
   const allowedOrigins = [
     'https://water-tracker-app-eight.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:4173',
+    ...(process.env.NODE_ENV === 'development'
+      ? ['http://localhost:5173', 'http://localhost:4173']
+      : []),
   ];
 
-  // Middleware
-  app.use(express.json());
-  app.use(express.static('uploads'));
-  app.use(cookieParser());
-  app.use(logger);
-
-  // CORS configuration
   app.use(
     cors({
       origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin && process.env.NODE_ENV === 'development') {
+          return callback(null, true);
+        }
+        if (origin && allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
         }
       },
       credentials: true,
-    })
+    }),
   );
 
-  // Routes
+  app.use(express.json());
+  app.use(express.static('uploads'));
+  app.use(cookieParser());
+  app.use(logger);
+
   app.use('/water', waterRouter);
   app.use('/user', userRouter);
   app.use('/auth', authRouter);
   app.use('/api-docs', swaggerDocs());
-
-  // Error handling
   app.use(notFoundHandler);
   app.use(errorHandler);
 
   return app;
 };
 
-// Create and start the server
 export const setupServer = () => {
   const app = createApp();
   const port = Number(getEnvVar('PORT', 3000));
