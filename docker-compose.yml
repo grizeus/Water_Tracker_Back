@@ -1,6 +1,6 @@
 services:
-  watertrackerbackend:
-    image: watertrackerbackend
+  water-back:
+    image: water-back
     env_file:
       - ./.env
     build:
