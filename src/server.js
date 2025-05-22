@@ -25,16 +25,20 @@ const createApp = () => {
   app.use(
     cors({
       origin: function (origin, callback) {
-        if (!origin && process.env.NODE_ENV === 'development') {
+        if (!origin) {
           return callback(null, true);
         }
-        if (origin && allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true);
         }
+        if (process.env.NODE_ENV === 'development' && origin) {
+          return callback(null, true);
+        }
+        console.error(`CORS Error: Origin '${origin}' not allowed. Allowed origins: ${allowedOrigins.join(', ')}`);
+        callback(new Error('Not allowed by CORS'));
       },
       credentials: true,
+      optionsSuccessStatus: 200,
     }),
   );
 
